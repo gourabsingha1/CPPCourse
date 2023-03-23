@@ -1,4 +1,4 @@
-# C-Course
+# C++ Course
 - C++
 - DSA
 - CP
