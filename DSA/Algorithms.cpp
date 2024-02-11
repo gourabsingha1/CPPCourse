@@ -47,7 +47,7 @@ string longestPrefix(string& s) {
 }
 
 
-// **** KMP | String matching. Returns index of the first occurance - O(N), O(N) ****
+// **** KMP | String matching. Returns index of the first occurance - O(N + M), O(M) ****
 class KMP {
 public:
     vector<int> lps(string& s) {
@@ -90,7 +90,55 @@ public:
 };
 
 
-// **** LIS - O(N^2), O(N) || O(NlogN), O(N) || O(N^2), O(N) ****
+// **** Z-Algorithm - O(N + M), O(N + M) ****
+class ZAlgo {
+public:
+    vector<int> zAlgo(string& s) {
+        int n = s.size(), l = 0, r = 0;
+        vector<int> z(n);
+        for (int i = 1; i < n; i++)
+        {
+            if(i > r) {
+                l = r = i;
+                while(r < n && s[r - l] == s[r]) {
+                    r++;
+                }
+                z[i] = r - l;
+                r--;
+            }
+            else {
+                int ind = i - l;
+                if(i + z[ind] <= r) {
+                    z[i] = z[ind];
+                }
+                else {
+                    l = i;
+                    while(r < n && s[r - l] == s[r]) {
+                        r++;
+                    }
+                    z[i] = r - l;
+                    r--;
+                }
+            }
+        }
+        return z;
+    }
+
+    int strStr(string& haystack, string& needle) {
+        string tot = needle + "$" + haystack;
+        vector<int> z = zAlgo(tot);
+        for (int i = 0; i < z.size(); i++)
+        {
+            if(z[i] == needle.size()) {
+                return i - needle.size() - 1;
+            }
+        }
+        return -1;
+    }
+};
+
+
+// **** LIS - O(N^2), O(N) ****
 int lengthOfLIS(vector<int>& nums) {
     int n = nums.size(), res = 0;
     vector<int> dp(n, 1);
@@ -107,6 +155,34 @@ int lengthOfLIS(vector<int>& nums) {
     return res;
 }
 
+// **** Printing LIS - O(N^2), O(N) ****
+vector<int> longestIncreasingSubsequence(vector<int>& nums) {
+    int n = nums.size(), lis = 0, maxInd = 0;
+    vector<int> dp(n, 1), prev(n), res;
+    for (int i = 0; i < n; i++)
+    {
+        prev[i] = i;
+        for (int j = 0; j < i; j++)
+        {
+            if(nums[j] < nums[i] && dp[i] < 1 + dp[j]){
+                dp[i] = 1 + dp[j];
+                prev[i] = j;
+            }
+        }
+        if(lis < dp[i]) {
+            lis = dp[i];
+            maxInd = i;
+        }
+    }
+    while(res.size() < lis) {
+        res.push_back(nums[maxInd]);
+        maxInd = prev[maxInd];
+    }
+    reverse(res.begin(), res.end());
+    return res;
+}
+
+// **** LIS - O(NlogN), O(N) ****
 int lengthOfLis(vector<int>& nums) {
     vector<int> LIS = {nums[0]};
     for (int i = 1; i < nums.size(); i++)
@@ -122,6 +198,7 @@ int lengthOfLis(vector<int>& nums) {
     return LIS.size();
 }
 
+// **** No. of LIS - O(N^2), O(N) ****
 int findNumberOfLIS(vector<int>& nums) {
     int n = nums.size(), res = 0, lengthOfLIS = 1;
     vector<int> dp(n, 1), cnt(n, 1);
@@ -153,7 +230,7 @@ int findNumberOfLIS(vector<int>& nums) {
 
 
 
-// **** LCS - O(N^2), O(N^2) ****
+// **** LCS - O(N * M), O(N * M) ****
 int longestCommonSubsequence(string text1, string text2) {
     int n = text1.size(), m = text2.size();
     vector<vector<int>> dp(n + 1, vector<int> (m + 1, 0));
