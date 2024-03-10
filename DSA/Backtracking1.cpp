@@ -139,109 +139,56 @@ public:
 };
 
 
-// **** N Queens ****
-class Sol5{
-    public:
-        bool isSafe(int row, int col, vector<string> &v){
-            // left upper diagonal
-            int duprow = row, dupcol = col;
-            while(row>=0 && col>=0){
-                if(v[row][col]=='Q'){
-                    return false;
-                }
-                row--;
-                col--;
-            }
-            //left row
-            row = duprow, col = dupcol;
-            while(col>=0){
-                if(v[row][col]=='Q'){
-                    return false;
-                }
-                col--;
-            }
-            // left lower diagonal
-            row = duprow, col = dupcol;
-            while(row<v.size() && col>=0){
-                if(v[row][col]=='Q'){
-                    return false;
-                }
-                row++;
-                col--;
-            }
-            return true;
-        }
-        vector<vector<string>> NQueens(int col, vector<string> &v, vector<vector<string>> &s){
-            if(col==v.size()){
-                s.push_back(v);
-                return s;
-            }
-            for (int row = 0; row < v.size(); row++)
-            {
-                if(isSafe(row,col,v)){
-                    v[row][col] = 'Q';
-                    NQueens(col+1,v,s);
-                    v[row][col] = '.';
-                }
-            }
-            return s;
-        }
-    // int n; cin>>n;
-    // vector<string> v;
-    // vector<vector<string>> s;
-    // fo(i,0,n){
-    //     string st(n,'.');
-    //     v.push_back(st)
-    // }
-    // Sol5 s5;
-    // for(auto &y : s5.NQueens(0,v,s)){
-    //     for(auto &y : x){
-    //         cou(y)
-    //     }nl
-    // }
+// **** N Queens - O(N!), O(N * M) ****
+class NQueens{
+public:
+    // go from top to bottom placing queens if position is valid
 
-    public:
-        /* lower diagonal = row+col, upper diagonal = n-1+col-row, left row = row. Mark them visited */
-        vector<vector<string>> NQueens2(int col, vector<string> &v, vector<int> &lowD, vector<int> &upD, vector<int> &lRow, vector<vector<string>> &s){
-            if(col==v.size()){
-                s.push_back(v);
-                return s;
+    bool isValid(int i, int j, int n, vector<string>& board) {
+        // upper left
+        int r = i, c = j;
+        while(r >= 0 && c >= 0) {
+            if(board[r--][c--] == 'Q') {
+                return 0;
             }
-            for (int row = 0; row < v.size(); row++)
-            {
-                if(lowD[row+col]==0 && upD[v.size()-1+col-row]==0 && lRow[row]==0){
-                    v[row][col] = 'Q';
-                    lowD[row+col] = 1;
-                    upD[v.size()-1+col-row] = 1;
-                    lRow[row] = 1;
-                    NQueens2(col+1, v, lowD, upD, lRow, s);
-                    v[row][col] = '.';
-                    lowD[row+col] = 0;
-                    upD[v.size()-1+col-row] = 0;
-                    lRow[row] = 0;
-                }
-            }
-            return s;
         }
-    // int n; cin>>n;
-    // vector<string> v;
-    // vector<int> lowD(2*n-1,0), upD(2*n-1,0), lRow(n,0);
-    // vector<vector<string>> s;
-    // fo(i,0,n){
-    //     string st(n,'.');
-    //     v.push_back(st)
-    // }
-    // Sol5 s5;
-    // for(auto &y : s5.NQueens2(0, v, lowD, upD, lRow, s)){
-    //     for(auto &y : x){
-    //         cou(y)
-    //     }nl
-    // }
+        // up
+        r = i, c = j;
+        while(r >= 0) {
+            if(board[r--][c] == 'Q') {
+                return 0;
+            }
+        }
+        // upper right
+        r = i, c = j;
+        while(r >= 0 && c < n) {
+            if(board[r--][c++] == 'Q') {
+                return 0;
+            }
+        }
+        return 1;
+    }
+    
+    void helper(int i, int n, vector<string>& board, vector<vector<string>>& res) {
+        if(i == n) {
+            res.push_back(board);
+            return;
+        }
+        
+        for (int j = 0; j < n; j++)
+        {
+            if(isValid(i, j, n, board)) {
+                board[i][j] = 'Q';
+                helper(i + 1, n, board, res);
+                board[i][j] = '.';
+            }
+        }
+    }
+    
+    vector<vector<string>> solveNQueens(int n) {
+        vector<vector<string>> res;
+        vector<string> board(n, string(n, '.'));
+        helper(0, n, board, res);
+        return res;
+    }
 };
-
-
-int main(){
-
-
-    return 0;
-}

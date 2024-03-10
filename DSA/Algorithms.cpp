@@ -43,7 +43,7 @@ string longestPrefix(string& s) {
             prevLPS = LPS[prevLPS - 1];
         }
     }
-    return s.substr(prevLPS);
+    return s.substr(0, prevLPS);
 }
 
 
@@ -196,6 +196,24 @@ int lengthOfLis(vector<int>& nums) {
         }
     }
     return LIS.size();
+}
+
+// **** Printing LIS - O(NlogN), O(N) ****
+vector<int> longestIncreasingSubsequence(vector<int>& nums) {
+    int n = nums.size(), lis = 1;
+    vector<int> tail(n, 0);
+    tail[0] = nums[0];
+    for (int i = 1; i < n; i++) {
+        if (nums[i] > tail[lis - 1]) {
+            tail[lis++] = nums[i];
+        }
+        else {
+            auto it = lower_bound(tail.begin(), tail.begin() + lis, nums[i]);
+            *it = nums[i];
+        }
+    }
+    tail.resize(lis);
+    return tail;
 }
 
 // **** No. of LIS - O(N^2), O(N) ****
