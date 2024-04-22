@@ -90,6 +90,15 @@ public:
                 if(dist[v] > prev + wt){
                     dist[v] = prev + wt;
                     pq.push({dist[v], v});
+                    /*
+                        To find the shortest path
+                        path[v] = u;
+                        
+                        while(path[node] != -1) {
+                            node = path[node];
+                            res.push_back(node);
+                        }
+                    */
                 }
             }
         }
