@@ -5,6 +5,7 @@ using namespace __gnu_pbds;
 using namespace std;
 template <typename T>
 using oset = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+// using omultiset = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_order_statistics_node_update>;
 #define cin(a) int n; cin>>n; int a[n]; for(int i = 0; i < n; ++i) {cin>>a[i];}
 #define cinv(v) int n; cin>>n; vector<int> v; for(int i=0; i<n; ++i){int xx; cin>>xx; v.push_back(xx);}
 #define lcou(v) {for(auto &x : v) cout<<x<<' '; cout<<"\n";}
@@ -25,11 +26,11 @@ public:
 
         lcou(st)
 
-        // find kth element
+        // Find kth element
         cout<<"0th element: "<<*st.find_by_order(0)<<endl;
         cout<<"3th element: "<<*st.find_by_order(3)<<endl;
 
-        // find no of elements strictly smaller than x
+        // Find no of elements strictly smaller than x
         cout<<"No of elements strictly smaller than 7: "<<st.order_of_key(7)<<endl;
     }
 };
@@ -63,86 +64,47 @@ public:
     }
 };
 
-// return max element index
-class SparseTable2 {
-public:
-    vector<vector<int>> mat, res;
 
-    SparseTable2(vector<int>& nums) {
-        int n = nums.size();
-        mat.resize((n + 1), vector<int> (log2(n) + 1));
-        res.resize((n + 1), vector<int> (log2(n) + 1));
-        for (int i = 0; i < n; i++)
-        {
-            mat[i][0] = nums[i];
-            res[i][0] = i;
-        }
-        for (int j = 1; (1 << j) <= n; j++)
-        {
-            for (int i = 0; i + (1 << j) - 1 < n; i++)
-            {
-                if(mat[i][j - 1] > mat[i + (1 << (j - 1))][j - 1]) {
-                    mat[i][j] = mat[i][j - 1];
-                    res[i][j] = res[i][j - 1];
-                }
-                else {
-                    mat[i][j] = mat[i + (1 << (j - 1))][j - 1];
-                    res[i][j] = res[i + (1 << (j - 1))][j - 1];
-                }
-            }
-        }
+
+// **** Trie - O(N * S), O(N * 26) ****
+struct TrieNode
+{
+    TrieNode* links[26];
+    bool isEnd; // 1 if word exists, 0 if doesn't exist
+    int cntEndWith = 0; // Count no. of words equal to word
+    int cntPrefix = 0; // Count no. of prefixes equal to word
+
+    // Checks if a node contains a character
+    bool containsKey(char ch) {
+        return links[ch - 'a'];
     }
 
-    int query(int l, int r) {
-        int j = log2(r - l + 1);
-        if(mat[l][j] > mat[r - (1 << j) + 1][j]) {
-            return res[l][j];
-        }
-        return res[r - (1 << j) + 1][j];
+    // Puts a node
+    void putKey(char ch, TrieNode* newNode) {
+        links[ch - 'a'] = newNode;
+    }
+
+    // Next node
+    TrieNode* next(char ch) {
+        return links[ch - 'a'];
     }
 };
 
-
-
-// **** Trie - O(N), O(N) ****
 class Trie {
 public:
-    struct Node
-    {
-        Node* links[26];
-        bool isEnd; // 1 if word exists, 0 if doesn't exist
-        int cntEndWith = 0; // count no. of words equal to word
-        int cntPrefix = 0; // count no. of prefixes equal to word
-
-        // checks if a node contains a character
-        bool containsKey(char ch) {
-            return links[ch - 'a'];
-        }
-
-        // puts a node
-        void putKey(char ch, Node* newNode) {
-            links[ch - 'a'] = newNode;
-        }
-
-        // next node
-        Node* next(char ch) {
-            return links[ch - 'a'];
-        }
-    };
-    
-    Node* root;
+    TrieNode* root;
 
     Trie() {
-        root = new Node();
+        root = new TrieNode();
     }
     
     void insert(string& word) {
-        Node* node = root;
+        TrieNode* node = root;
         for(auto& ch : word) {
             if(!node->containsKey(ch)) {
-                node->putKey(ch, new Node());
+                node->putKey(ch, new TrieNode());
             }
-            // go to its reference node
+            // Go to its reference node
             node = node->next(ch);
             node->cntPrefix++;
         }
@@ -151,7 +113,7 @@ public:
     }
     
     bool search(string& word) {
-        Node* node = root;
+        TrieNode* node = root;
         for(auto& ch : word) {
             if(!node->containsKey(ch)) {
                 return 0;
@@ -160,9 +122,20 @@ public:
         }
         return node->isEnd;
     }
+
+    int countWordsEqualTo(string& word) {
+        TrieNode* node = root;
+        for(auto& ch : word) {
+            if(!node->containsKey(ch)) {
+                return 0;
+            }
+            node = node->next(ch);
+        }
+        return node->cntEndWith;
+    }
     
     bool startsWith(string& prefix) {
-        Node* node = root;
+        TrieNode* node = root;
         for(auto& ch : prefix) {
             if(!node->containsKey(ch)) {
                 return 0;
@@ -172,19 +145,8 @@ public:
         return 1;
     }
 
-    int countWordsEqualTo(string& word) {
-        Node* node = root;
-        for(auto& ch : word) {
-            if(!node->containsKey(ch)) {
-                return 0;
-            }
-            node = node->next(ch);
-        }
-        return node->cntEndWith;
-    }
-
     int countWordsStartingWith(string& word) {
-        Node* node = root;
+        TrieNode* node = root;
         for(auto& ch : word) {
             if(!node->containsKey(ch)) {
                 return 0;
@@ -194,8 +156,8 @@ public:
         return node->cntPrefix;
     }
 
-    void erase(string& word) { // assuming word exists
-        Node* node = root;
+    void erase(string& word) { // Assuming word exists
+        TrieNode* node = root;
         for(auto& ch : word) {
             if(!node->containsKey(ch)) {
                 return;
@@ -207,6 +169,64 @@ public:
     }
 };
 
+
+
+// **** Flexible Trie - O(N * S), O(N * S) ****
+class TrieNode2 {
+public:
+    unordered_map<int, TrieNode2*> children;
+    int cntEndWith; // Count no. of words equal to word
+    int cntPrefix; // Count no. of prefixes equal to word
+
+    TrieNode2() {
+        cntEndWith = 0;
+        cntPrefix = 0;
+    }
+};
+
+class Trie2 {
+public:
+    TrieNode2* root;
+
+    Trie2() {
+        root = new TrieNode2();
+    }
+
+    void insert(string& word) {
+        TrieNode2* node = root;
+        for(auto& ch : word) {
+            if(node->children.find(ch) == node->children.end()) {
+                node->children[ch] = new TrieNode2();
+            }
+            node = node->children[ch];
+            node->cntPrefix++;
+        }
+        node->cntEndWith++;
+    }
+
+    bool search(string& word) {
+        TrieNode2* node = root;
+        for(auto& ch : word) {
+            if(node->children.find(ch) == node->children.end()) {
+                return 0;
+            }
+            node = node->children[ch];
+        }
+        return node->cntEndWith;
+    }
+
+    void erase(string& word) { // Assuming word exists
+        TrieNode2* node = root;
+        for(auto& ch : word) {
+            if(node->children.find(ch) == node->children.end()) {
+                return;
+            }
+            node = node->children[ch];
+            node->cntPrefix--;
+        }
+        node->cntEndWith--;
+    }
+};
 
 
 // **** Segment Trees - O(N), O(N) ****
@@ -223,7 +243,7 @@ public:
         build();
     }
 
-    // build the segment tree - O(N)
+    // Build the segment tree - O(N)
     void build(int ind = 0, int low = 0, int high = n - 1) {
         if(low == high) {
             seg[ind] = a[low];
@@ -235,24 +255,24 @@ public:
         build(left, low, mid);
         build(right, mid + 1, high);
         seg[ind] = max(seg[left], seg[right]);
-        // find the minimum value
+        // Find the minimum value
         // seg[ind] = min(seg[left], seg[right]);
-        // find the sum
+        // Find the sum
         // seg[ind] = seg[left] + seg[right];
     }
 
     // query to find min/max/sum in range (l, r) - O(logN)
     int query(int l, int r, int ind = 0, int low = 0, int high = n - 1) {
-        // completely lies
+        // Completely lies
         if(l <= low && r >= high) {
             return seg[ind];
         }
-        // doesn't lie
+        // Doesn't lie
         if(l > high || r < low) {
             return INT_MIN;
-            // find the minimum value
+            // Find the minimum value
             // return INT_MAX;
-            // find the sum
+            // Find the sum
             // return 0;
         }
 
@@ -261,13 +281,13 @@ public:
         int leftQuery = query(l, r, 2 * ind + 1, low, mid);
         int rightQuery = query(l, r, 2 * ind + 2, mid + 1, high);
         return max(leftQuery, rightQuery);
-        // find the minimum value
+        // Find the minimum value
         // return min(leftQuery, rightQuery);
-        // find the sum
+        // Find the sum
         // return leftQuery + rightQuery;
     }
 
-    // single element update with val - O(logN)
+    // Single element update with val - O(logN)
     void pointUpdate(int index, int val, int ind = 0, int low = 0, int high = n - 1) {
         if(low == high) {
             seg[ind] += val;
@@ -285,7 +305,7 @@ public:
         }
     }
 
-    // update all values in range (l, r) with val - O(logN)
+    // Update all values in range (l, r) with val - O(logN)
     void rangeUpdate(int l, int r, int val, int ind = 0, int low = 0, int high = n - 1) {
         int left = 2 * ind + 1, right = 2 * ind + 2;
         if(lazy[ind]) {
@@ -314,7 +334,7 @@ public:
         seg[ind] = seg[left] + seg[right];
     }
 
-    // query to find sum in lazy in range (l, r) - O(logN)
+    // Query to find sum in lazy in range (l, r) - O(logN)
     int querySumLazy(int l, int r, int val, int ind = 0, int low = 0, int high = n - 1) {
         int left = 2 * ind + 1, right = 2 * ind + 2;
         if(lazy[ind]) {

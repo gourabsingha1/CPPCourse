@@ -22,7 +22,8 @@ bool isOdd(ll num) {
 
 // check power of 2
 bool checkPowerOfTwo(ll num) {
-    return num & (num - 1);
+    if(num <= 0) return 0;
+    return !(num & (num - 1));
 }
 
 // check if ith bit is set bit
@@ -31,17 +32,17 @@ bool checkSetBit(ll num, int i) {
 }
 
 // make the ith bit set bit
-void setBit(ll num, int i) {
+void setBit(ll& num, int i) {
     num |= (1 << i);
 }
 
 // make the ith bit unset
-void unsetBit(ll num, int i) {
+void unsetBit(ll& num, int i) {
     num &= (~(1 << i)); // ~ inverts the binary
 }
 
 // toggle the ith bit unset
-void toggleBit(ll num, int i) {
+void toggleBit(ll& num, int i) {
     num ^= (1 << i);
 }
 

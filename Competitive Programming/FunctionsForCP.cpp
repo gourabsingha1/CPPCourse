@@ -53,16 +53,21 @@ void sieve_init(int n) {
 
 
 // **** Prime Factorization - O(logN), O(sqrt(N)) ****
+unordered_map<int, vector<int>> primeFacs;
 vector<int> primeFactors(int num) {
-    vector<int> res;
+    if(primeFacs[num].size()) {
+        return primeFacs[num];
+    }
+    
+    int x = num;
     while(num > 1) {
         int primeFactor = hp[num];
         while(num % primeFactor == 0) {
             num /= primeFactor;
-            res.push_back(primeFactor);
+            primeFacs[x].push_back(primeFactor);
         }
     }
-    return res;
+    return primeFacs[x];
 }
 
 
