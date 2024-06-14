@@ -3,7 +3,7 @@ using namespace std;
 
 
 // **** Prims Algorithm Minimum Spanning Tree - O(elog(n)), O(n + e) ****
-class PrimsAlgoMST{
+class PrimsAlgoMST {
 public:
     vector<int> prims(int n, vector<vector<int>> adj[]) {
         int cost = 0;
@@ -18,7 +18,7 @@ public:
             if(vis[u]) continue;
             vis[u] = 1;
             cost += prev;
-            for(auto& it : adj[u]){
+            for(auto& it : adj[u]) {
                 int v = it[0], wt = it[1];
                 if(!vis[v]){
                     pq.push({wt, v});
@@ -81,7 +81,7 @@ public:
 
 
 // **** Kruskals Algorithm Minimum Spanning Tree - O(elog(n)), O(n + e) ****
-class KruskalsAlgoMST{
+class KruskalsAlgoMST {
 public:
     static bool cmp(const vector<int> &a, const vector<int> &b) {
         return a[2] < b[2];
@@ -93,9 +93,9 @@ public:
         vector<int> parent(n);
         int cost = 0;
         DSU dsu(n);
-        for(auto &edge : edges){
+        for(auto &edge : edges) {
             int u = edge[0], v = edge[1], wt = edge[2];
-            if(dsu.findParent(u) != dsu.findParent(v)){
+            if(dsu.findParent(u) != dsu.findParent(v)) {
                 cost += wt;
                 res.push_back({u, v});
                 dsu.merge(u, v);
@@ -161,7 +161,7 @@ public:
 
 
 // **** Kosaraju's Algorithm (No. of SCC's) - O(n + e), O(n) ****
-class TopologicalSortDFS{
+class TopologicalSortDFS {
 public:
     void dfs(int u, vector<bool> &vis, vector<int> &st, vector<int> adj[]){
         vis[u] = 1;
@@ -173,7 +173,7 @@ public:
         st.push_back(u);
     }
 
-    vector<int> topoSort(int n, vector<int> adj[]){
+    vector<int> topoSort(int n, vector<int> adj[]) {
         vector<int> st;
         vector<bool> vis(n);
         for (int i = 0; i < n; i++)
@@ -187,9 +187,9 @@ public:
     }
 };
 
-class KosarajusAlgo{
+class KosarajusAlgo {
 public:
-    void dfs(int u, vector<bool> &vis, vector<int> adj[]){
+    void dfs(int u, vector<bool> &vis, vector<int> adj[]) {
         vis[u] = 1;
         for(auto& v : adj[u]) {
             if(!vis[v]){
@@ -198,7 +198,7 @@ public:
         }
     }
 
-    int kosaraju(int n, vector<int> adj[]){
+    int kosaraju(int n, vector<int> adj[]) {
         int res = 0;
         vector<int> revAdj[n];
         for (int i = 0; i < n; i++)
