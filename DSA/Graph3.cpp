@@ -3,18 +3,18 @@ using namespace std;
 
 
 // **** Shortest Path in Undirected Graph with Unit Weights ****
-class ShortestPathUDGraphUnit{
+class ShortestPathUDGraphUnit {
 public:
-    vector<int> bfs(int src, int n, vector<int> adj[]){
+    vector<int> bfs(int src, int n, vector<int> adj[]) {
         vector<int> dist(n, 1e9);
         queue<int> q;
         dist[src] = 0;
         q.push(src);
-        while(q.size()){
+        while(q.size()) {
             int u = q.front();
             q.pop();
-            for(auto& v : adj[u]){
-                if(dist[v] > dist[u] + 1){
+            for(auto& v : adj[u]) {
+                if(dist[v] > dist[u] + 1) {
                     dist[v] = dist[u] + 1;
                     q.push(v);
                 }
@@ -27,25 +27,25 @@ public:
 
 
 // **** Shortest Path in DAG with Weights - O(n + e), O(n) ****
-class ShortestPathDAGraph{
+class ShortestPathDAGraph {
 public:
-    void tSortDFS(int u, vector<bool>& vis, vector<int>& st, vector<vector<int>> adj[]){
+    void tSortDFS(int u, vector<bool>& vis, vector<int>& st, vector<vector<int>> adj[]) {
         vis[u] = 1;
-        for(auto& it : adj[u]){
+        for(auto& it : adj[u]) {
             int v = it[0];
-            if(!vis[v]){
+            if(!vis[v]) {
                 tSortDFS(v, vis, st, adj);
             }
         }
         st.push_back(u);
     }
     
-    vector<int> topoSort(int n, vector<vector<int>> adj[]){
+    vector<int> topoSort(int n, vector<vector<int>> adj[]) {
         vector<int> st;
         vector<bool> vis(n);
         for (int u = 0; u < n; u++)
         {
-            if(!vis[u]){
+            if(!vis[u]) {
                 tSortDFS(u, vis, st, adj);
             }
         }
@@ -53,11 +53,11 @@ public:
         return st;
     }
 
-    vector<int> shortestPath(int src, int n, vector<vector<int>> adj[]){
+    vector<int> shortestPath(int src, int n, vector<vector<int>> adj[]) {
         vector<int> st = topoSort(n, adj);
         vector<int> dist(n, 1e9);
         dist[src] = 0;
-        while(st.size()){
+        while(st.size()) {
             int u = st.back();
             st.pop_back();
             if(dist[u] != 1e9){
@@ -74,9 +74,9 @@ public:
 
 
 // **** Dijkstra's Algorithm - O(elog(n)), O(n + e) ****
-class DijkstrasAlgo{
+class DijkstrasAlgo {
 public:
-    vector<int> dijkstra(int src, int n, vector<vector<int>> adj[]){
+    vector<int> dijkstra(int src, int n, vector<vector<int>> adj[]) {
         vector<int> dist(n, 1e9);
         priority_queue <pair<int, int>, vector<pair<int, int>>, greater<>> pq;
         dist[src] = 0;
@@ -105,18 +105,18 @@ public:
         return dist;
     }
 
-    vector<int> dijkstraSet(int src, int n, vector<vector<int>> adj[]){
+    vector<int> dijkstraSet(int src, int n, vector<vector<int>> adj[]) {
         vector<int> dist(n, 1e9);
         set<pair<int, int>> st;
         dist[src] = 0;
         st.insert({0, src}); // dist, node
-        while(st.size()){
+        while(st.size()) {
             auto stIt = *st.begin();
             auto [prev, u] = stIt;
             st.erase(stIt);
-            for(auto &it : adj[u]){
+            for(auto &it : adj[u]) {
                 int v = it[0], wt = it[1];
-                if(dist[v] > prev + wt){
+                if(dist[v] > prev + wt) {
                     if(dist[v] != 1e9){ // edge check
                         st.erase({dist[v], v}); // longer distance not needed
                     }
@@ -132,9 +132,9 @@ public:
 
 
 // **** Bellman Ford Algorithm - O(n * e), O(n) ****
-class BellmanFord{
+class BellmanFord {
 public:
-    vector<int> bellmanFord(int src, int n, vector<vector<int>>& edges){
+    vector<int> bellmanFord(int src, int n, vector<vector<int>>& edges) {
         vector<int> dist(n, 1e9);
         dist[src] = 0;
         for (int i = 0; i < n - 1; i++)
@@ -146,7 +146,7 @@ public:
                 }
             }
         }
-        for(auto& edge : edges){
+        for(auto& edge : edges) {
             int u = edge[0], v = edge[1], wt = edge[2];
             if(dist[v] > dist[u] + wt){
                 cout<<"Negative cycle found!\n";
@@ -160,9 +160,9 @@ public:
 
 
 // **** Floyd Warshall Algorithm - O(n^3), O(n^2) ****
-class FloydWarshall{
+class FloydWarshall {
 public:
-    void floydWarshall(vector<vector<int>>& matrix){
+    void floydWarshall(vector<vector<int>>& matrix) {
         int n = matrix.size();
         for (int via = 0; via < n; via++)
         {
@@ -176,9 +176,9 @@ public:
         }
     }
     
-    void solve(vector<vector<int>>& edges){
+    void solve(vector<vector<int>>& edges) {
         int n = edges.size();
-        vector<vector<int>> matrix(n, vector<int> (n, 1e9));;
+        vector<vector<int>> matrix(n, vector<int> (n, 1e9));
         for (int i = 0; i < edges.size(); i++)
         {
             int u = edges[i][0], v = edges[i][1], wt = edges[i][2];

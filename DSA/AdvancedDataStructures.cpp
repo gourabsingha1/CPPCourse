@@ -69,10 +69,16 @@ public:
 // **** Trie - O(N * S), O(N * 26) ****
 struct TrieNode
 {
-    TrieNode* links[26];
+    TrieNode* links[26] = {};
     bool isEnd; // 1 if word exists, 0 if doesn't exist
-    int cntEndWith = 0; // Count no. of words equal to word
-    int cntPrefix = 0; // Count no. of prefixes equal to word
+    int cntEndWith; // Count no. of words equal to word
+    int cntPrefix; // Count no. of prefixes equal to word
+
+    TrieNode() {
+        isEnd = 0;
+        cntEndWith = 0;
+        cntPrefix = 0;
+    }
 
     // Checks if a node contains a character
     bool containsKey(char ch) {

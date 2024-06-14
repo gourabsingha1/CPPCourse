@@ -3,18 +3,18 @@ using namespace std;
 
 
 // **** Cycle Detection in Directed Graph using DFS ****
-class CycleDirectedDFS{
+class CycleDirectedDFS {
 public:
-    bool dfs(int u, vector<bool>& vis, vector<bool>& dfsVis, vector<int> adj[]){
+    bool dfs(int u, vector<bool>& vis, vector<bool>& dfsVis, vector<int> adj[]) {
         vis[u] = 1;
         dfsVis[u] = 1;
-        for(auto& v : adj[u]){
+        for(auto& v : adj[u]) {
             if(!vis[v]){
-                if(dfs(v, vis, dfsVis, adj)){
+                if(dfs(v, vis, dfsVis, adj)) {
                     return 1;
                 }
             }
-            else if(dfsVis[v]){
+            else if(dfsVis[v]) {
                 return 1;
             }
         }
@@ -27,7 +27,7 @@ public:
         vector<bool> dfsVis(n); // to mark the current visited path
         for (int i = 0; i < n; i++)
         {
-            if(!vis[i]){
+            if(!vis[i]) {
                 if(dfs(i, vis, dfsVis, adj)){
                     return 1;
                 }
@@ -41,24 +41,24 @@ public:
 
 // **** Topological Sort (DFS) (DAG = Directed Acylic Graph) - O(n + e), O(n) ****
 // if u -> v, then u appears first in the ordering
-class TopologicalSortDFS{
+class TopologicalSortDFS {
 public:
-    void dfs(int u, vector<bool>& vis, vector<int>& st, vector<int> adj[]){
+    void dfs(int u, vector<bool>& vis, vector<int>& st, vector<int> adj[]) {
         vis[u] = 1;
-        for(auto& v : adj[u]){
-            if(!vis[v]){
+        for(auto& v : adj[u]) {
+            if(!vis[v]) {
                 dfs(v, vis, st, adj);
             }
         }
         st.push_back(u);
     }
 
-    vector<int> topoSort(int n, vector<int> adj[]){
+    vector<int> topoSort(int n, vector<int> adj[]) {
         vector<int> st;
         vector<bool> vis(n);
         for (int u = 0; u < n; u++)
         {
-            if(!vis[u]){
+            if(!vis[u]) {
                 dfs(u, vis, st, adj);
             }
         }
@@ -70,33 +70,30 @@ public:
 
 
 // **** Topological Sort (BFS) | Kahn's Algorithm - O(n + e), O(n) ****
-class TopologicalSortBFS{
+class TopologicalSortBFS {
 public:
-    vector<int> topoSort(int n, vector<int> adj[]){
+    vector<int> topoSort(int n, vector<int> adj[]) {
         vector<int> res, indegree(n, 0); // indegree = no. of arrows directed towards
         queue<int> q;
         for (int u = 0; u < n; u++)
         {
-            for(auto& v : adj[u]){
+            for(auto& v : adj[u]) {
                 indegree[v]++;
             }
         }
         for (int u = 0; u < n; u++)
         {
-            if(indegree[u] == 0){
+            if(indegree[u] == 0) {
                 q.push(u);
             }
         }
-        while(q.size()){
-            int size = q.size();
-            while(size--) {
-                int u = q.front();
-                q.pop();
-                res.push_back(u);
-                for(auto& v : adj[u]){
-                    if(--indegree[v] == 0){
-                        q.push(v);
-                    }
+        while(q.size()) {
+            int u = q.front();
+            q.pop();
+            res.push_back(u);
+            for(auto& v : adj[u]) {
+                if(--indegree[v] == 0){
+                    q.push(v);
                 }
             }
         }
@@ -108,15 +105,15 @@ public:
 
 // **** Cycle Detection in Directed Graph using BFS ****
 // Topological sort must not generate
-class CycleDirectedBFS{
+class CycleDirectedBFS {
 public:
-    bool isCyclic(int n, vector<int> adj[]){
+    bool isCyclic(int n, vector<int> adj[]) {
         int cnt = 0;
         vector<int> indegree(n, 0); // indegree = no. of arrows directed towards
         queue<int> q;
         for (int u = 0; u < n; u++)
         {
-            for(auto& v : adj[u]){
+            for(auto& v : adj[u]) {
                 indegree[v]++;
             }
         }
@@ -131,7 +128,7 @@ public:
             while(size--) {
                 int u = q.front();
                 q.pop();
-                for(auto& v : adj[u]){
+                for(auto& v : adj[u]) {
                     if(--indegree[v] == 0){
                         q.push(v);
                     }
