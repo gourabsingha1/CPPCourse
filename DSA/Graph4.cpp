@@ -57,8 +57,9 @@ public:
     bool merge(int u, int v) {
         u = findParent(u), v = findParent(v);
         if(u == v) {
-            return 1;
+            return 0;
         }
+
         if(rank[u] < rank[v]) {
             parent[u] = v;
         }
@@ -70,7 +71,7 @@ public:
             rank[u]++;
         }
         n--;
-        return 0;
+        return 1;
     }
 
     int size() {
@@ -117,13 +118,11 @@ public:
 // **** Bridges in Graph | Tarjan's Algorithm - O(n + e), O(n) ****
 class BridgesInGraph {
 public:
-    void dfs(int u, int parent, vector<bool> &vis, vector<int> &tin, vector<int> &low, int timer, vector<int> adj[], vector<vector<int>> &res){
+    void dfs(int u, int par, vector<bool>& vis, vector<int>& tin, vector<int>& low, int timer, vector<int> adj[], vector<vector<int>>& res) {
         vis[u] = 1;
         tin[u] = low[u] = timer++;
         for(auto& v : adj[u]) {
-            if(v == parent){
-                continue;
-            }
+            if(v == par) continue;
             if(!vis[v]) {
                 dfs(v, u, vis, tin, low, timer, adj, res);
                 low[u] = min(low[u], low[v]);
@@ -131,15 +130,15 @@ public:
                     res.push_back({u, v});
                 }
             }
-            else{
-                low[u] = min(low[u], tin[v]); // vertex with two or more nodes
+            else {
+                low[u] = min(low[u], tin[v]);
             }
         }
     }
 
     vector<vector<int>> criticalConnections(int n, vector<vector<int>>& connections) {
         vector<vector<int>> res;
-        vector<int> adj[n], tin(n, -1), low(n, -1); // adj, time of insertion, low
+        vector<int> adj[n], tin(n, -1), low(n, -1); // tin = time of insertion, low = lowest time of insertion
         vector<bool> vis(n);
         for (int i = 0; i < connections.size(); i++)
         {
@@ -160,10 +159,59 @@ public:
 
 
 
+// **** Articulation Point | Tarjan's Algorithm - O(n + e), O(n) ****
+class ArticulationPoint {
+public:
+    void dfs(int u, int par, vector<bool>& vis, vector<int>& tin, vector<int>& low, int timer, vector<int> adj[], set<int>& res) {
+        vis[u] = 1;
+        tin[u] = low[u] = timer++;
+        int child = 0;
+        for(auto& v : adj[u]) {
+            if(v == par) continue;
+            if(!vis[v]) {
+                dfs(v, u, vis, tin, low, timer, adj, res);
+                low[u] = min(low[u], low[v]);
+                if(par != -1 && low[v] >= tin[u]) { // Formula
+                    res.insert(u);
+                }
+                child++;
+            }
+            else {
+                low[u] = min(low[u], tin[v]);
+            }
+        }
+        if(par == -1 && child > 1) {
+            res.insert(u);
+        }
+    }
+
+    vector<int> articulationPoints(int n, vector<vector<int>>& connections) {
+        set<int> res;
+        vector<int> adj[n], tin(n, -1), low(n, -1); // tin = time of insertion, low = lowest time of insertion
+        vector<bool> vis(n);
+        for (int i = 0; i < connections.size(); i++)
+        {
+            int u = connections[i][0], v = connections[i][1];
+            adj[u].push_back(v);
+            adj[v].push_back(u);
+        }
+        int timer = 0;
+        for (int i = 0; i < n; i++)
+        {
+            if(!vis[i]) {
+                dfs(i, -1, vis, tin, low, timer, adj, res);
+            }
+        }
+        return {res.begin(), res.end()};
+    }
+};
+
+
+
 // **** Kosaraju's Algorithm (No. of SCC's) - O(n + e), O(n) ****
 class TopologicalSortDFS {
 public:
-    void dfs(int u, vector<bool> &vis, vector<int> &st, vector<int> adj[]){
+    void dfs(int u, vector<bool>& vis, vector<int>& st, vector<int> adj[]) {
         vis[u] = 1;
         for(auto& v : adj[u]) {
             if(!vis[v]){
@@ -189,10 +237,10 @@ public:
 
 class KosarajusAlgo {
 public:
-    void dfs(int u, vector<bool> &vis, vector<int> adj[]) {
+    void dfs(int u, vector<bool>& vis, vector<int> adj[]) {
         vis[u] = 1;
         for(auto& v : adj[u]) {
-            if(!vis[v]){
+            if(!vis[v]) {
                 dfs(v, vis, adj);
             }
         }
@@ -201,14 +249,14 @@ public:
     int kosaraju(int n, vector<int> adj[]) {
         int res = 0;
         vector<int> revAdj[n];
-        for (int i = 0; i < n; i++)
+        for (int u = 0; u < n; u++)
         {
-            for(auto& it : adj[i]) {
-                revAdj[it].push_back(i);
+            for(auto& v : adj[u]) {
+                revAdj[v].push_back(u);
             }
         }
-        TopologicalSortDFS Topo;
-        vector<int> topo = Topo.topoSort(n, adj);
+        TopologicalSortDFS tps;
+        vector<int> topo = tps.topoSort(n, adj);
         vector<bool> vis(n);
         for (int i = 0; i < n; i++)
         {

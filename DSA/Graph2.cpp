@@ -9,7 +9,7 @@ public:
         vis[u] = 1;
         dfsVis[u] = 1;
         for(auto& v : adj[u]) {
-            if(!vis[v]){
+            if(!vis[v]) {
                 if(dfs(v, vis, dfsVis, adj)) {
                     return 1;
                 }
@@ -23,12 +23,12 @@ public:
     }
 
     bool isCyclic(int n, vector<int> adj[]){
-        vector<bool> vis(n); // to mark all time visited paths
-        vector<bool> dfsVis(n); // to mark the current visited path
-        for (int i = 0; i < n; i++)
+        vector<bool> vis(n); // To mark all time visited paths
+        vector<bool> dfsVis(n); // To mark the current visited path
+        for (int u = 0; u < n; u++)
         {
-            if(!vis[i]) {
-                if(dfs(i, vis, dfsVis, adj)){
+            if(!vis[u]) {
+                if(dfs(u, vis, dfsVis, adj)) {
                     return 1;
                 }
             }
@@ -40,7 +40,7 @@ public:
 
 
 // **** Topological Sort (DFS) (DAG = Directed Acylic Graph) - O(n + e), O(n) ****
-// if u -> v, then u appears first in the ordering
+// If u -> v, then u appears first in the ordering
 class TopologicalSortDFS {
 public:
     void dfs(int u, vector<bool>& vis, vector<int>& st, vector<int> adj[]) {
@@ -119,7 +119,7 @@ public:
         }
         for (int u = 0; u < n; u++)
         {
-            if(indegree[u] == 0){
+            if(indegree[u] == 0) {
                 q.push(u);
             }
         }

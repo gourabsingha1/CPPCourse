@@ -60,8 +60,8 @@ public:
         while(st.size()) {
             int u = st.back();
             st.pop_back();
-            if(dist[u] != 1e9){
-                for(auto& it : adj[u]){
+            if(dist[u] != 1e9) {
+                for(auto& it : adj[u]) {
                     int v = it[0], wt = it[1];
                     dist[v] = min(dist[v], dist[u] + wt);
                 }
@@ -78,31 +78,36 @@ class DijkstrasAlgo {
 public:
     vector<int> dijkstra(int src, int n, vector<vector<int>> adj[]) {
         vector<int> dist(n, 1e9);
+        vector<int> parent(n); // To find a shortest path
+        iota(parent.begin(), parent.end(), 0); // 0-based index
         priority_queue <pair<int, int>, vector<pair<int, int>>, greater<>> pq;
         dist[src] = 0;
         pq.push({0, src}); // dist, node
-        while(pq.size()){
+        while(pq.size()) {
             auto [prev, u] = pq.top();
             pq.pop();
             if (prev > dist[u]) continue; // pruning
-            for(auto& it : adj[u]){
+            for(auto& it : adj[u]) {
                 int v = it[0], wt = it[1];
-                if(dist[v] > prev + wt){
+                if(dist[v] > prev + wt) {
                     dist[v] = prev + wt;
                     pq.push({dist[v], v});
-                    /*
-                        To find the shortest path
-                        path[v] = u;
-                        
-                        while(path[node] != -1) {
-                            node = path[node];
-                            res.push_back(node);
-                        }
-                    */
+                    parent[v] = u;
                 }
             }
         }
         return dist;
+
+        // To find a shortest path
+        vector<int> path;
+        int node = n - 1; // 0-based index
+        while(parent[node] != node) { // Iterate backwards from dest to src through the parent array
+            path.push_back(node);
+            node = parent[node];
+        }
+        path.push_back(src);
+        reverse(path.begin(), path.end());
+        return path;
     }
 
     vector<int> dijkstraSet(int src, int n, vector<vector<int>> adj[]) {
@@ -114,7 +119,7 @@ public:
             auto stIt = *st.begin();
             auto [prev, u] = stIt;
             st.erase(stIt);
-            for(auto &it : adj[u]) {
+            for(auto& it : adj[u]) {
                 int v = it[0], wt = it[1];
                 if(dist[v] > prev + wt) {
                     if(dist[v] != 1e9){ // edge check
@@ -139,7 +144,7 @@ public:
         dist[src] = 0;
         for (int i = 0; i < n - 1; i++)
         {
-            for(auto& edge : edges){
+            for(auto& edge : edges) {
                 int u = edge[0], v = edge[1], wt = edge[2];
                 if(dist[v] > dist[u] + wt) {
                     dist[v] = dist[u] + wt;
