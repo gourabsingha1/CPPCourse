@@ -3,9 +3,9 @@ using namespace std;
 
 
 // **** Input Undirected graph ****
-void inputUndirectedGraph(int n, vector<int> adj[])
-{
-    for(int i = 0; i < n; i++){
+void inputUndirectedGraph(int n, vector<int> adj[]) {
+    for(int i = 0; i < n; i++)
+    {
         int u, v;
         cin>>u>>v;
         adj[u].push_back(v);
@@ -14,9 +14,9 @@ void inputUndirectedGraph(int n, vector<int> adj[])
 }
 
 // **** Input Directed graph ****
-void inputDirectedGraph(int n, vector<int> adj[])
-{
-    for(int i = 0; i < n; i++){
+void inputDirectedGraph(int n, vector<int> adj[]) {
+    for(int i = 0; i < n; i++)
+    {
         int u, v;
         cin>>u>>v;
         adj[u].push_back(v);
@@ -24,9 +24,9 @@ void inputDirectedGraph(int n, vector<int> adj[])
 }
 
 // **** Print adjacent nodes ****
-void printNodes(int n, vector<int> adj[])
-{
-    for(int u = 0; u < n; u++) {
+void printNodes(int n, vector<int> adj[]) {
+    for(int u = 0; u < n; u++)
+    {
         cout<<u<<": ";
         for(auto& v : adj[u]) {
             cout<<v<<" ";
@@ -49,7 +49,7 @@ vector<vector<int>> createGraph(int n, vector<vector<int>>& edges) {
 
 
 // **** Depth First Search (DFS) ****
-class DFSRecursive{
+class DFSRecursive {
 public:
     void dfs(int u, vector<bool>& vis, vector<int> adj[], vector<int>& res) {
         res.push_back(u);
@@ -60,6 +60,7 @@ public:
             }
         }
     }
+
     vector<int> dfsOfGraph(int n, vector<int> adj[]) {
         vector<int> res;
         vector<bool> vis(n, 0);
@@ -78,7 +79,7 @@ vector<int> dfs(int n, vector<int> adj[]) {
     stack<int> st;
     for (int i = 0; i < n; i++)
     {
-        if(!vis[i]){
+        if(!vis[i]) {
             st.push(i), vis[i] = 1;
         }
         while(st.size()) {
@@ -160,10 +161,10 @@ public:
 // **** Cycle Detection in Undirected Graph using BFS ****
 class CycleUndirectedBFS {
 public:
-    bool bfs(int i, vector<bool>& vis, vector<int> adj[]) {
+    bool bfs(int node, vector<bool>& vis, vector<int> adj[]) {
         queue<pair<int, int>> q;
-        vis[i] = 1;
-        q.push({i, -1}); // First node doesn't have a parent node
+        vis[node] = 1;
+        q.push({node, -1}); // First node doesn't have a parent node
         
         while(q.size()) {
             auto [u, par] = q.front();
@@ -183,7 +184,8 @@ public:
     
     bool isCyclic(int n, vector<int> adj[]) {
         vector<bool> vis(n, 0);
-        for(int u = 0; u < n; u++) {
+        for(int u = 0; u < n; u++)
+        {
             if(!vis[u]) {
                 if(bfs(u, vis, adj)) {
                     return 1;

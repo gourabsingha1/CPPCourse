@@ -103,8 +103,7 @@ public:
                 while(r < n && s[r - l] == s[r]) {
                     r++;
                 }
-                z[i] = r - l;
-                r--;
+                z[i] = r - l, r--;
             }
             else {
                 int ind = i - l;
@@ -116,8 +115,7 @@ public:
                     while(r < n && s[r - l] == s[r]) {
                         r++;
                     }
-                    z[i] = r - l;
-                    r--;
+                    z[i] = r - l, r--;
                 }
             }
         }
@@ -131,6 +129,45 @@ public:
         {
             if(z[i] == needle.size()) {
                 return i - needle.size() - 1;
+            }
+        }
+        return -1;
+    }
+};
+
+
+// **** Rabin Karp - O(N + M), O(N + M) ****
+class RabinKarp {
+public:
+    ll hashVal(int& n, string& s, int radix = 26, int M = 1e9 + 7) {
+        ll res = 0, factor = 1;
+        for(int i = n - 1; i >= 0; i--) {
+            res = (res + (s[i] - 'a') * factor) % M;
+            factor = (factor * radix) % M;
+        }
+        return res;
+    }
+
+    int strStr(string haystack, string needle) {
+        int n = haystack.size(), m = needle.size(), radix1 = 26, M1 = 1e9 + 7, radix2 = 27, M2 = 1e9 + 33;
+        ll maxWt1 = 1, maxWt2 = 1;
+        for(int i = 0; i < m; i++) {
+            maxWt1 = (maxWt1 * radix1) % M1, maxWt2 = (maxWt2 * radix2) % M2;
+        }
+        ll hashNee1 = hashVal(m, needle, radix1, M1), hashNee2 = hashVal(m, needle, radix2, M2);
+        ll hashHay1, hashHay2;
+
+        for(int i = 0; i + m - 1 < n; i++) {
+            if(i == 0) {
+                hashHay1 = hashVal(m, haystack, radix1, M1), hashHay2 = hashVal(m, haystack, radix2, M2);
+            }
+            else {
+                hashHay1 = ((hashHay1 * radix1) % M1 - ((haystack[i - 1] - 'a') * maxWt1) % M1 + (haystack[i + m - 1] - 'a') + M1) % M1;
+                hashHay2 = ((hashHay2 * radix2) % M2 - ((haystack[i - 1] - 'a') * maxWt2) % M2 + (haystack[i + m - 1] - 'a') + M2) % M2;
+            }
+
+            if(hashHay1 == hashNee1 && hashHay2 == hashNee2) {
+                return i;
             }
         }
         return -1;
@@ -164,7 +201,7 @@ vector<int> longestIncreasingSubsequence(vector<int>& nums) {
         prev[i] = i;
         for (int j = 0; j < i; j++)
         {
-            if(nums[j] < nums[i] && dp[i] < 1 + dp[j]){
+            if(nums[j] < nums[i] && dp[i] < 1 + dp[j]) {
                 dp[i] = 1 + dp[j];
                 prev[i] = j;
             }
@@ -187,7 +224,7 @@ int lengthOfLis(vector<int>& nums) {
     vector<int> LIS = {nums[0]};
     for (int i = 1; i < nums.size(); i++)
     {
-        int lb = lower_bound(LIS.begin(), LIS.end(), nums[i]) - LIS.begin();
+        int lb = lower_bound(LIS.begin(), LIS.end(), nums[i]) - LIS.begin(); // Upperbound for not strictly increasing
         if(lb == LIS.size()) {
             LIS.push_back(nums[i]);
         }
@@ -224,19 +261,16 @@ int findNumberOfLIS(vector<int>& nums) {
     {
         for (int j = 0; j < i; j++)
         {
-            if(nums[j] < nums[i]){
-                if(dp[i] == 1 + dp[j]) {
-                    cnt[i] += cnt[j];
-                }
-                else if(dp[i] < 1 + dp[j]) {
-                    cnt[i] = cnt[j];
-                }
-                dp[i] = max(dp[i], 1 + dp[j]);
+            if(nums[j] < nums[i] && dp[i] < 1 + dp[j]) {
+                dp[i] = 1 + dp[j];
+                cnt[i] = cnt[j];
+            }
+            else if(nums[j] < nums[i] && dp[i] == 1 + dp[j]) {
+                cnt[i] += cnt[j];
             }
         }
         lengthOfLIS = max(lengthOfLIS, dp[i]);
     }
-    
     for (int i = 0; i < n; i++)
     {
         if(dp[i] == lengthOfLIS) {

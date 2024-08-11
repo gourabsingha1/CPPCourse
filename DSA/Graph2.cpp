@@ -22,7 +22,7 @@ public:
         return 0;
     }
 
-    bool isCyclic(int n, vector<int> adj[]){
+    bool isCyclic(int n, vector<int> adj[]) {
         vector<bool> vis(n); // To mark all time visited paths
         vector<bool> dfsVis(n); // To mark the current visited path
         for (int u = 0; u < n; u++)
@@ -70,36 +70,33 @@ public:
 
 
 // **** Topological Sort (BFS) | Kahn's Algorithm - O(n + e), O(n) ****
-class TopologicalSortBFS {
-public:
-    vector<int> topoSort(int n, vector<int> adj[]) {
-        vector<int> res, indegree(n, 0); // indegree = no. of arrows directed towards
-        queue<int> q;
-        for (int u = 0; u < n; u++)
-        {
-            for(auto& v : adj[u]) {
-                indegree[v]++;
-            }
+vector<int> topoSortBFS(int n, vector<int> adj[]) {
+    vector<int> res, indegree(n, 0); // indegree = no. of arrows directed towards
+    queue<int> q;
+    for (int u = 0; u < n; u++)
+    {
+        for(auto& v : adj[u]) {
+            indegree[v]++;
         }
-        for (int u = 0; u < n; u++)
-        {
-            if(indegree[u] == 0) {
-                q.push(u);
-            }
-        }
-        while(q.size()) {
-            int u = q.front();
-            q.pop();
-            res.push_back(u);
-            for(auto& v : adj[u]) {
-                if(--indegree[v] == 0){
-                    q.push(v);
-                }
-            }
-        }
-        return res;
     }
-};
+    for (int u = 0; u < n; u++)
+    {
+        if(indegree[u] == 0) {
+            q.push(u);
+        }
+    }
+    while(q.size()) {
+        int u = q.front();
+        q.pop();
+        res.push_back(u);
+        for(auto& v : adj[u]) {
+            if(--indegree[v] == 0){
+                q.push(v);
+            }
+        }
+    }
+    return res;
+}
 
 
 

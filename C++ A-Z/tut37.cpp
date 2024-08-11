@@ -1,15 +1,17 @@
-#include<iostream>
+#include <iostream>
 using namespace std;
 
 // ## Inheritance syntax and visibility mode
 
 // Base class
-class Employee{
-    public:
-    Employee(){}
+class Employee {
+public:
     int id;
     float salary;
-    Employee(int inpId){
+
+    Employee() {}
+
+    Employee(int inpId) {
         id = inpId;
         salary = 34.04;
     }
@@ -29,25 +31,29 @@ Note:
 */
 
 // Creating a Programmer class derived from Employee Base class
-class Programmer : public Employee{
-    public:
+class Programmer : public Employee {
+public:
     int languageCode;
-    Programmer(int inpId){
+
+    Programmer(int inpId) {
         id = inpId;
         languageCode = 9;
     }
-    void getData(){
-        cout<<id<<endl;
+
+    void getData() {
+        cout << id << endl;
     }
 };
 
-int main(){
+int main()
+{
     Employee gourab(1), parthiv(2);
-    cout<<gourab.salary<<endl;
-    cout<<parthiv.salary<<endl;
+    cout << gourab.salary << endl;
+    cout << parthiv.salary << endl;
+    
     Programmer skillF(10);
-    cout<<skillF.languageCode<<endl;
-    cout<<skillF.id<<endl; // If Visibility mode is private then this will throw an error
+    cout << skillF.languageCode << endl;
+    cout << skillF.id << endl; // If Visibility mode is private then this will throw an error
     skillF.getData();
 
     return 0;

@@ -188,20 +188,20 @@ vector<int> levelorderTraversal(TreeNode *root){
 
 
 // **** Build Tree from Level Order ****
-TreeNode *buildTreeLevelOrder(TreeNode* root){
+TreeNode *buildTreeLevelOrder(TreeNode* root) {
     queue<TreeNode*> q;
     cout<<"Enter data for root"<<endl;
     int data;
     cin>>data;
     root = new TreeNode(data);
     q.push(root);
-    while(!q.empty()){
+    while(!q.empty()) {
         TreeNode *temp = q.front();
         q.pop();
         cout<<"Enter left node for : "<<temp->val<<endl;
         int leftData;
         cin>>leftData;
-        if(leftData != -1){
+        if(leftData != -1) {
             temp->left = new TreeNode(leftData);
             q.push(temp->left);
         }
@@ -209,7 +209,7 @@ TreeNode *buildTreeLevelOrder(TreeNode* root){
         cout<<"Enter right node for : "<<temp->val<<endl;
         int rightData;
         cin>>rightData;
-        if(rightData != -1){
+        if(rightData != -1) {
             temp->right = new TreeNode(rightData);
             q.push(temp->right);
         }
@@ -222,10 +222,10 @@ TreeNode *buildTreeLevelOrder(TreeNode* root){
 // **** Tree to Graph ****
 unordered_map<int, vector<int>> adj;
 
-void treeToGraph(TreeNode* root){
+void treeToGraph(TreeNode* root) {
     queue<TreeNode*> q;
     q.push(root);
-    while(q.size()){
+    while(q.size()) {
         auto node = q.front();
         q.pop();
         if(node->left) {

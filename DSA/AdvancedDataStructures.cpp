@@ -37,44 +37,15 @@ public:
 
 
 
-// **** Sparse Table - O(NlogN), O(NlogN) ****
-class SparseTable {
-public:
-    vector<vector<int>> mat;
-
-    SparseTable(vector<int>& nums) {
-        int n = nums.size();
-        mat.resize((n + 1), vector<int> (log2(n) + 1));
-        for (int i = 0; i < n; i++)
-        {
-            mat[i][0] = nums[i];
-        }
-        for (int j = 1; (1 << j) <= n; j++)
-        {
-            for (int i = 0; i + (1 << j) - 1 < n; i++)
-            {
-                mat[i][j] = min(mat[i][j - 1], mat[i + (1 << (j - 1))][j - 1]);
-            }
-        }
-    }
-
-    int query(int l, int r) {
-        int j = log2(r - l + 1);
-        return min(mat[l][j], mat[r - (1 << j) + 1][j]);
-    }
-};
-
-
-
 // **** Trie - O(N * S), O(N * 26) ****
-struct TrieNode
-{
-    TrieNode* links[26] = {};
+struct TrieNode {
+    TrieNode* links[26];
     bool isEnd; // 1 if word exists, 0 if doesn't exist
     int cntEndWith; // Count no. of words equal to word
     int cntPrefix; // Count no. of prefixes equal to word
 
     TrieNode() {
+        memset(links, NULL, sizeof(links));
         isEnd = 0;
         cntEndWith = 0;
         cntPrefix = 0;
@@ -86,7 +57,7 @@ struct TrieNode
     }
 
     // Puts a node
-    void putKey(char ch, TrieNode* newNode) {
+    void putKey(TrieNode* newNode, char ch) {
         links[ch - 'a'] = newNode;
     }
 
@@ -108,7 +79,7 @@ public:
         TrieNode* node = root;
         for(auto& ch : word) {
             if(!node->containsKey(ch)) {
-                node->putKey(ch, new TrieNode());
+                node->putKey(new TrieNode(), ch);
             }
             // Go to its reference node
             node = node->next(ch);
@@ -235,22 +206,68 @@ public:
 };
 
 
-// **** Segment Trees - O(N), O(N) ****
-class SegmentTrees {
-public:
-    vector<int> a, seg, lazy;
-    static int n;
 
-    SegmentTrees(vector<int>& a) {
+// **** Sparse Table - O(NlogN), O(NlogN) ****
+class SparseTable {
+public:
+    vector<vector<int>> mat;
+
+    SparseTable(vector<int>& nums) {
+        int n = nums.size();
+        mat.resize((n + 1), vector<int> (log2(n) + 1));
+        for (int i = 0; i < n; i++)
+        {
+            mat[i][0] = nums[i];
+        }
+        for (int j = 1; (1 << j) <= n; j++)
+        {
+            for (int i = 0; i + (1 << j) - 1 < n; i++)
+            {
+                mat[i][j] = min(mat[i][j - 1], mat[i + (1 << (j - 1))][j - 1]);
+            }
+        }
+    }
+
+    int query(int l, int r) {
+        int j = log2(r - l + 1);
+        return min(mat[l][j], mat[r - (1 << j) + 1][j]);
+    }
+};
+
+
+// **** Segment Tree - O(NlogN), O(N) ****
+class SegmentTree {
+public:
+    SegmentTree(vector<int>& a) {
         this->a = a;
         n = a.size();
         seg.resize(4 * n);
         lazy.resize(4 * n);
-        build();
+        build(0, 0, n - 1);
     }
 
+    int query(int l, int r) {
+        return query(l, r, 0, 0, n - 1);
+    }
+
+    void pointUpdate(int index, int val) {
+        pointUpdate(index, val, 0, 0, n - 1);
+    }
+
+    void rangeUpdate(int l, int r, int val) {
+        rangeUpdate(l, r, val, 0, 0, n - 1);
+    }
+
+    int querySumLazy(int l, int r, int val) {
+        return querySumLazy(l, r, val, 0, 0, n - 1);
+    }
+
+private:
+    vector<int> a, seg, lazy;
+    int n;
+
     // Build the segment tree - O(N)
-    void build(int ind = 0, int low = 0, int high = n - 1) {
+    void build(int ind, int low, int high) {
         if(low == high) {
             seg[ind] = a[low];
             return;
@@ -260,43 +277,46 @@ public:
         int left = 2 * ind + 1, right = 2 * ind + 2;
         build(left, low, mid);
         build(right, mid + 1, high);
-        seg[ind] = max(seg[left], seg[right]);
-        // Find the minimum value
+        // Find maximum
+        // seg[ind] = max(seg[left], seg[right]);
+        // Find minimum
         // seg[ind] = min(seg[left], seg[right]);
-        // Find the sum
-        // seg[ind] = seg[left] + seg[right];
+        // Find sum
+        seg[ind] = seg[left] + seg[right];
     }
 
     // query to find min/max/sum in range (l, r) - O(logN)
-    int query(int l, int r, int ind = 0, int low = 0, int high = n - 1) {
+    int query(int l, int r, int ind, int low, int high) {
         // Completely lies
         if(l <= low && r >= high) {
             return seg[ind];
         }
         // Doesn't lie
         if(l > high || r < low) {
-            return INT_MIN;
-            // Find the minimum value
+            // Find maximum
+            // return INT_MIN;
+            // Find minimum
             // return INT_MAX;
-            // Find the sum
-            // return 0;
+            // Find sum
+            return 0;
         }
 
         // overlaps
         int mid = (low + high) / 2;
         int leftQuery = query(l, r, 2 * ind + 1, low, mid);
         int rightQuery = query(l, r, 2 * ind + 2, mid + 1, high);
-        return max(leftQuery, rightQuery);
-        // Find the minimum value
+        // Find maximum
+        // return max(leftQuery, rightQuery);
+        // Find minimum
         // return min(leftQuery, rightQuery);
-        // Find the sum
-        // return leftQuery + rightQuery;
+        // Find sum
+        return leftQuery + rightQuery;
     }
 
     // Single element update with val - O(logN)
-    void pointUpdate(int index, int val, int ind = 0, int low = 0, int high = n - 1) {
+    void pointUpdate(int index, int val, int ind, int low, int high) {
         if(low == high) {
-            seg[ind] += val;
+            seg[ind] = val;
         }
         else {
             int mid = (low + high) / 2;
@@ -312,7 +332,7 @@ public:
     }
 
     // Update all values in range (l, r) with val - O(logN)
-    void rangeUpdate(int l, int r, int val, int ind = 0, int low = 0, int high = n - 1) {
+    void rangeUpdate(int l, int r, int val, int ind, int low, int high) {
         int left = 2 * ind + 1, right = 2 * ind + 2;
         if(lazy[ind]) {
             seg[ind] += (high - low + 1) * lazy[ind];
@@ -341,7 +361,7 @@ public:
     }
 
     // Query to find sum in lazy in range (l, r) - O(logN)
-    int querySumLazy(int l, int r, int val, int ind = 0, int low = 0, int high = n - 1) {
+    int querySumLazy(int l, int r, int val, int ind, int low, int high) {
         int left = 2 * ind + 1, right = 2 * ind + 2;
         if(lazy[ind]) {
             seg[ind] += (high - low + 1) * lazy[ind];

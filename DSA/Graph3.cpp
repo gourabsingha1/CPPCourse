@@ -2,31 +2,28 @@
 using namespace std;
 
 
-// **** Shortest Path in Undirected Graph with Unit Weights ****
-class ShortestPathUDGraphUnit {
-public:
-    vector<int> bfs(int src, int n, vector<int> adj[]) {
-        vector<int> dist(n, 1e9);
-        queue<int> q;
-        dist[src] = 0;
-        q.push(src);
-        while(q.size()) {
-            int u = q.front();
-            q.pop();
-            for(auto& v : adj[u]) {
-                if(dist[v] > dist[u] + 1) {
-                    dist[v] = dist[u] + 1;
-                    q.push(v);
-                }
+// **** Shortest Path in Undirected Graph with Unit Weights - O(N + E), O(N) ****
+vector<int> shortestPathUDGraphUnit(int src, int n, vector<int> adj[]) {
+    vector<int> dist(n, 1e9);
+    queue<int> q;
+    dist[src] = 0;
+    q.push(src);
+    while(q.size()) {
+        int u = q.front();
+        q.pop();
+        for(auto& v : adj[u]) {
+            if(dist[v] > dist[u] + 1) {
+                dist[v] = dist[u] + 1;
+                q.push(v);
             }
         }
-        return dist;
     }
-};
+    return dist;
+}
 
 
 
-// **** Shortest Path in DAG with Weights - O(n + e), O(n) ****
+// **** Shortest Path in DAG with Weights - O(N + E), O(N) ****
 class ShortestPathDAGraph {
 public:
     void tSortDFS(int u, vector<bool>& vis, vector<int>& st, vector<vector<int>> adj[]) {
@@ -73,7 +70,7 @@ public:
 
 
 
-// **** Dijkstra's Algorithm - O(elog(n)), O(n + e) ****
+// **** Dijkstra's Algorithm - O(Elog(N)), O(N + E) ****
 class DijkstrasAlgo {
 public:
     vector<int> dijkstra(int src, int n, vector<vector<int>> adj[]) {
@@ -136,60 +133,52 @@ public:
 
 
 
-// **** Bellman Ford Algorithm - O(n * e), O(n) ****
-class BellmanFord {
-public:
-    vector<int> bellmanFord(int src, int n, vector<vector<int>>& edges) {
-        vector<int> dist(n, 1e9);
-        dist[src] = 0;
-        for (int i = 0; i < n - 1; i++)
-        {
-            for(auto& edge : edges) {
-                int u = edge[0], v = edge[1], wt = edge[2];
-                if(dist[v] > dist[u] + wt) {
-                    dist[v] = dist[u] + wt;
-                }
-            }
-        }
+// **** Bellman Ford Algorithm - O(N * E), O(N) ****
+// No dist updation should take place after n - 1 iterations
+vector<int> bellmanFord(int src, int n, vector<vector<int>>& edges) {
+    vector<int> dist(n, 1e9);
+    dist[src] = 0;
+    for (int i = 0; i < n - 1; i++)
+    {
         for(auto& edge : edges) {
             int u = edge[0], v = edge[1], wt = edge[2];
-            if(dist[v] > dist[u] + wt){
-                cout<<"Negative cycle found!\n";
-                break;
+            if(dist[v] > dist[u] + wt) {
+                dist[v] = dist[u] + wt;
             }
         }
-        return dist;
     }
-};
+    for(auto& edge : edges) {
+        int u = edge[0], v = edge[1], wt = edge[2];
+        if(dist[v] > dist[u] + wt){
+            cout<<"Negative cycle found!\n";
+            break;
+        }
+    }
+    return dist;
+}
 
 
 
-// **** Floyd Warshall Algorithm - O(n^3), O(n^2) ****
-class FloydWarshall {
-public:
-    void floydWarshall(vector<vector<int>>& matrix) {
-        int n = matrix.size();
-        for (int via = 0; via < n; via++)
+// **** Floyd Warshall Algorithm - O(N^3), O(N^2) ****
+vector<vector<int>> floydWarshall(int n, vector<vector<int>>& edges) {
+    vector<vector<int>> dist(n, vector<int> (n, 1e9));
+    for(int u = 0; u < n; u++) {
+        dist[u][u] = 0;
+    }
+    for(auto& edge : edges) {
+        int u = edge[0], v = edge[1], wt = edge[2];
+        dist[u][v] = min(dist[u][v], wt);
+        dist[v][u] = min(dist[v][u], wt);
+    }
+    for (int via = 0; via < n; via++)
+    {
+        for (int u = 0; u < n; u++)
         {
-            for (int i = 0; i < n; i++)
+            for (int v = 0; v < n; v++)
             {
-                for (int j = 0; j < n; j++)
-                {
-                    matrix[i][j] = min(matrix[i][j], matrix[i][via] + matrix[via][j]);
-                }
+                dist[u][v] = min(dist[u][v], dist[u][via] + dist[via][v]);
             }
         }
     }
-    
-    void solve(vector<vector<int>>& edges) {
-        int n = edges.size();
-        vector<vector<int>> matrix(n, vector<int> (n, 1e9));
-        for (int i = 0; i < edges.size(); i++)
-        {
-            int u = edges[i][0], v = edges[i][1], wt = edges[i][2];
-            matrix[u][v] = wt;
-            matrix[v][u] = wt;
-        }
-        floydWarshall(matrix);
-    }
-};
+    return dist;
+}

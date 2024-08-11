@@ -12,6 +12,7 @@ public:
         priority_queue <pair<int, int>, vector<pair<int, int>>, greater<>> pq;
         parent[0] = -1;
         pq.push({0, 0}); // dist, node
+        
         while(pq.size()) {
             auto [prev, u] = pq.top();
             pq.pop();
@@ -20,7 +21,7 @@ public:
             cost += prev;
             for(auto& it : adj[u]) {
                 int v = it[0], wt = it[1];
-                if(!vis[v]){
+                if(!vis[v]) {
                     pq.push({wt, v});
                     parent[v] = u;
                 }
@@ -84,7 +85,7 @@ public:
 // **** Kruskals Algorithm Minimum Spanning Tree - O(elog(n)), O(n + e) ****
 class KruskalsAlgoMST {
 public:
-    static bool cmp(const vector<int> &a, const vector<int> &b) {
+    static bool cmp(vector<int>& a, vector<int>& b) {
         return a[2] < b[2];
     }
 
@@ -94,7 +95,7 @@ public:
         vector<int> parent(n);
         int cost = 0;
         DSU dsu(n);
-        for(auto &edge : edges) {
+        for(auto& edge : edges) {
             int u = edge[0], v = edge[1], wt = edge[2];
             if(dsu.findParent(u) != dsu.findParent(v)) {
                 cost += wt;
