@@ -150,6 +150,7 @@ ll fac(ll n, int m = M){
 
 
 // **** nCr - O(r) ****
+// nCr = n! / (r! * (n - r)!) = (n * (n - 1) * (n - 2) ... r times) / r!
 long nCr(int n, int r){
     if(r > n) {
         return nCr(r, n);
@@ -159,7 +160,7 @@ long nCr(int n, int r){
     r = min(r, n - r);
     for (int i = 1; i <= r; i++)
     {
-        res = res * (n - r + i) / i;
+        res = res * (n - i + 1) / i;
     }
     return res;
 }
