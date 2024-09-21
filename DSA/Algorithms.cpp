@@ -9,16 +9,16 @@ using namespace std;
 // **** Floyds Cycle Detection - O(N), O(1) ****
 int findDuplicate(vector<int>& nums) {
     int fast = 0, slow = 0;
-    while(1){
+    while(1) {
         fast = nums[nums[fast]]; // slow * 2 = fast
         slow = nums[slow];
-        if(fast == slow){ // since its a cycle, they will always meet
+        if(fast == slow) { // since its a cycle, they will always meet
             break;
         }
     }
     // start slow from the beginning to find the meeting point
     slow = 0;
-    while(fast != slow){
+    while(fast != slow) {
         // shifting both pointers by one until they meet
         fast = nums[fast];
         slow = nums[slow];
@@ -31,15 +31,14 @@ int findDuplicate(vector<int>& nums) {
 string longestPrefix(string& s) {
     int n = s.size(), LPS[n], i = 1, prevLPS = 0;
     LPS[0] = 0;
-    while(i < n){
-        if(s[i] == s[prevLPS]){
-            LPS[i] = prevLPS + 1;
-            prevLPS++, i++;
+    while(i < n) {
+        if(s[i] == s[prevLPS]) {
+            LPS[i++] = ++prevLPS;
         }
-        else if(prevLPS == 0){
-            LPS[i] = 0, i++;
+        else if(prevLPS == 0) {
+            LPS[i++] = 0;
         }
-        else{
+        else {
             prevLPS = LPS[prevLPS - 1];
         }
     }
@@ -53,35 +52,35 @@ public:
     vector<int> lps(string& s) {
         int n = s.size(), i = 1, prevLPS = 0;
         vector<int> LPS(n, 0);
-        while(i < n){
-            if(s[i] == s[prevLPS]){
-                LPS[i] = prevLPS + 1;
-                prevLPS++, i++;
+        while(i < n) {
+            if(s[i] == s[prevLPS]) {
+                LPS[i++] = ++prevLPS;
             }
-            else if(prevLPS == 0){
-                LPS[i] = 0, i++;
+            else if(prevLPS == 0) {
+                LPS[i++] = 0;
             }
-            else{
+            else {
                 prevLPS = LPS[prevLPS - 1];
             }
         }
         return LPS;
+        // return prevLPS; // Last index of prefix which matches suffix
     }
     
     int strStr(string& haystack, string& needle) {
         vector<int> LPS = lps(needle);
         int i = 0, j = 0;
-        while(i < haystack.size()){
-            if(haystack[i] == needle[j]){
+        while(i < haystack.size()) {
+            if(haystack[i] == needle[j]) {
                 i++, j++;
             }
-            else if(j == 0){
+            else if(j == 0) {
                 i++;
             }
-            else{
+            else {
                 j = LPS[j - 1];
             }
-            if(j == needle.size()){
+            if(j == needle.size()) {
                 return i - needle.size();
             }
         }
@@ -96,8 +95,7 @@ public:
     vector<int> zAlgo(string& s) {
         int n = s.size(), l = 0, r = 0;
         vector<int> z(n);
-        for (int i = 1; i < n; i++)
-        {
+        for (int i = 1; i < n; i++) {
             if(i > r) {
                 l = r = i;
                 while(r < n && s[r - l] == s[r]) {
@@ -125,8 +123,7 @@ public:
     int strStr(string& haystack, string& needle) {
         string tot = needle + "$" + haystack;
         vector<int> z = zAlgo(tot);
-        for (int i = 0; i < z.size(); i++)
-        {
+        for (int i = 0; i < z.size(); i++) {
             if(z[i] == needle.size()) {
                 return i - needle.size() - 1;
             }
@@ -179,10 +176,8 @@ public:
 int lengthOfLIS(vector<int>& nums) {
     int n = nums.size(), res = 0;
     vector<int> dp(n, 1);
-    for (int i = 0; i < n; i++)
-    {
-        for (int j = 0; j < i; j++)
-        {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < i; j++) {
             if(nums[j] < nums[i]){
                 dp[i] = max(dp[i], 1 + dp[j]);
             }
@@ -196,11 +191,9 @@ int lengthOfLIS(vector<int>& nums) {
 vector<int> longestIncreasingSubsequence(vector<int>& nums) {
     int n = nums.size(), lis = 0, maxInd = 0;
     vector<int> dp(n, 1), prev(n), res;
-    for (int i = 0; i < n; i++)
-    {
+    for (int i = 0; i < n; i++) {
         prev[i] = i;
-        for (int j = 0; j < i; j++)
-        {
+        for (int j = 0; j < i; j++) {
             if(nums[j] < nums[i] && dp[i] < 1 + dp[j]) {
                 dp[i] = 1 + dp[j];
                 prev[i] = j;
@@ -222,8 +215,7 @@ vector<int> longestIncreasingSubsequence(vector<int>& nums) {
 // **** LIS - O(NlogN), O(N) ****
 int lengthOfLis(vector<int>& nums) {
     vector<int> LIS = {nums[0]};
-    for (int i = 1; i < nums.size(); i++)
-    {
+    for (int i = 1; i < nums.size(); i++) {
         int lb = lower_bound(LIS.begin(), LIS.end(), nums[i]) - LIS.begin(); // Upperbound for not strictly increasing
         if(lb == LIS.size()) {
             LIS.push_back(nums[i]);
@@ -257,22 +249,21 @@ vector<int> longestIncreasingSubsequence(vector<int>& nums) {
 int findNumberOfLIS(vector<int>& nums) {
     int n = nums.size(), res = 0, lengthOfLIS = 1;
     vector<int> dp(n, 1), cnt(n, 1);
-    for (int i = 0; i < n; i++)
-    {
-        for (int j = 0; j < i; j++)
-        {
-            if(nums[j] < nums[i] && dp[i] < 1 + dp[j]) {
-                dp[i] = 1 + dp[j];
-                cnt[i] = cnt[j];
-            }
-            else if(nums[j] < nums[i] && dp[i] == 1 + dp[j]) {
-                cnt[i] += cnt[j];
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < i; j++) {
+            if(nums[j] < nums[i]) {
+                if(dp[i] < 1 + dp[j]) {
+                    dp[i] = 1 + dp[j];
+                    cnt[i] = cnt[j];
+                }
+                else if(dp[i] == 1 + dp[j]) {
+                    cnt[i] += cnt[j];
+                }
             }
         }
         lengthOfLIS = max(lengthOfLIS, dp[i]);
     }
-    for (int i = 0; i < n; i++)
-    {
+    for (int i = 0; i < n; i++) {
         if(dp[i] == lengthOfLIS) {
             res += cnt[i];
         }
@@ -286,10 +277,8 @@ int findNumberOfLIS(vector<int>& nums) {
 int longestCommonSubsequence(string text1, string text2) {
     int n = text1.size(), m = text2.size();
     vector<vector<int>> dp(n + 1, vector<int> (m + 1, 0));
-    for (int i = 1; i <= n; i++)
-    {
-        for (int j = 1; j <= m; j++)
-        {
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= m; j++) {
             int res = 0;
             if(text1[i - 1] == text2[j - 1]) {
                 res = 1 + dp[i - 1][j - 1];
@@ -309,15 +298,12 @@ int longestCommonSubsequence(string text1, string text2) {
 // **** Matrix Chain Multiplication - O(N^3), O(N^2) ****
 int MCM(int n, int arr[]) {
     vector<vector<int>> dp(n, vector<int> (n, 0));
-    for (int i = n - 1; i >= 1; i--)
-    {
-        for (int j = i + 1; j < n; j++)
-        {
+    for (int i = n - 1; i >= 1; i--) {
+        for (int j = i + 1; j < n; j++) {
             if(i == j) continue;
             
             int res = INT_MAX;
-            for (int k = i; k < j; k++)
-            {
+            for (int k = i; k < j; k++) {
                 int cost = arr[i - 1] * arr[k] * arr[j];
                 int left = dp[i][k];
                 int right = dp[k + 1][j];
@@ -331,17 +317,17 @@ int MCM(int n, int arr[]) {
 
 
 // **** Monotonic Stack (Strictly) - O(N), O(N) ****
+// For Non-Strictly, introduce equality where it doesn't exist and remove where exists
 vector<int> nextGreaterElementIndex(vector<int>& nums) {
     int n = nums.size();
-    vector<int> res(n, -1);
-    stack<int> decStack;
-    for (int i = 0; i < n; i++)
-    {
-        while(decStack.size() && nums[decStack.top()] < nums[i]) {
-            res[decStack.top()] = i;
-            decStack.pop();
+    vector<int> res(n, n);
+    stack<int> st;
+    for (int i = 0; i < n; i++) {
+        while(st.size() && nums[st.top()] < nums[i]) {
+            res[st.top()] = i;
+            st.pop();
         }
-        decStack.push(i);
+        st.push(i);
     }
     return res;
 }
@@ -349,31 +335,27 @@ vector<int> nextGreaterElementIndex(vector<int>& nums) {
 vector<int> prevGreaterElementIndex(vector<int>& nums) {
     int n = nums.size();
     vector<int> res(n, -1);
-    stack<int> decStack;
-    for (int i = 0; i < n; i++)
-    {
-        while(decStack.size() && nums[decStack.top()] <= nums[i]) {
-            decStack.pop();
+    stack<int> st;
+    for (int i = n - 1; i >= 0; i--) {
+        while(st.size() && nums[st.top()] < nums[i]) {
+            res[st.top()] = i;
+            st.pop();
         }
-        if(decStack.size()) {
-            res[i] = decStack.top();
-        }
-        decStack.push(i);
+        st.push(i);
     }
     return res;
 }
 
 vector<int> nextSmallerElementIndex(vector<int>& nums) {
     int n = nums.size();
-    vector<int> res(n, -1);
-    stack<int> incStack;
-    for (int i = 0; i < n; i++)
-    {
-        while(incStack.size() && nums[incStack.top()] > nums[i]) {
-            res[incStack.top()] = i;
-            incStack.pop();
+    vector<int> res(n, n);
+    stack<int> st;
+    for (int i = 0; i < n; i++) {
+        while(st.size() && nums[st.top()] > nums[i]) {
+            res[st.top()] = i;
+            st.pop();
         }
-        incStack.push(i);
+        st.push(i);
     }
     return res;
 }
@@ -381,26 +363,22 @@ vector<int> nextSmallerElementIndex(vector<int>& nums) {
 vector<int> prevSmallerElementIndex(vector<int>& nums) {
     int n = nums.size();
     vector<int> res(n, -1);
-    stack<int> incStack;
-    for (int i = 0; i < n; i++)
-    {
-        while(incStack.size() && nums[incStack.top()] >= nums[i]) {
-            incStack.pop();
+    stack<int> st;
+    for (int i = n - 1; i >= 0; i--) {
+        while(st.size() && nums[st.top()] > nums[i]) {
+            res[st.top()] = i;
+            st.pop();
         }
-        if(incStack.size()) {
-            res[i] = incStack.top();
-        }
-        incStack.push(i);
+        st.push(i);
     }
     return res;
 }
 
 pair<vector<int>, vector<int>> numberOfElementsGreaterThanCur(vector<int>& arr) {
-    int n = arr.size(), res = 0, M = 1e9 + 7;
+    int n = arr.size(), res = 0;
     stack<int> decStackPrev, decStackNext;
-    vector<int> left(n), right(n); // number of elements which are >= current element
-    for (int i = 0; i < n; i++)
-    {
+    vector<int> left(n), right(n); // Number of elements which are >= current element
+    for (int i = 0; i < n; i++) {
         while(decStackPrev.size() && arr[decStackPrev.top()] > arr[i]) {
             decStackPrev.pop();
         }
@@ -428,11 +406,10 @@ pair<vector<int>, vector<int>> numberOfElementsGreaterThanCur(vector<int>& arr) 
 }
 
 pair<vector<int>, vector<int>> numberOfElementsSmallerThanCur(vector<int>& arr) {
-    int n = arr.size(), res = 0, M = 1e9 + 7;
+    int n = arr.size(), res = 0;
     stack<int> incStackPrev, incStackNext;
-    vector<int> left(n), right(n); // number of elements which are <= current element
-    for (int i = 0; i < n; i++)
-    {
+    vector<int> left(n), right(n); // Number of elements which are <= current element
+    for (int i = 0; i < n; i++) {
         while(incStackPrev.size() && arr[incStackPrev.top()] < arr[i]) {
             incStackPrev.pop();
         }

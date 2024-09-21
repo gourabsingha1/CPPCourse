@@ -247,69 +247,6 @@ bool checkBST(TreeNode* root, long long int left, long long int right){
 // I did it
 
 
-// Morris Traversal
-// If no left, print it
-// Else, cur = root, go to extreme right
-// If NULL, then connect that pointer to cur, then cur = cur->left
-// Else cut the thread, print and cur = cur->right
-
-vector<int> morrisInorder(TreeNode* root) {
-    vector<int> inorder;
-    TreeNode *cur = root;
-    while(cur) {
-        if(cur->left == NULL) {
-            inorder.push_back(cur->val);
-            cur = cur->right;
-        }
-        else {
-            TreeNode *prev = cur->left;
-            while(prev->right && prev->right != cur) {
-                prev = prev->right;
-            }
-
-            if(prev->right == NULL) {
-                prev->right = cur;
-                cur = cur->left;
-            }
-            else {
-                prev->right = NULL;
-                inorder.push_back(cur->val);
-                cur = cur->right;
-            }
-        }
-    }
-    return inorder;
-}
-
-vector<int> morrisPreorder(TreeNode* root) {
-    vector<int> preorder;
-    TreeNode *cur = root;
-    while(cur) {
-        if(cur->left == NULL) {
-            preorder.push_back(cur->val);
-            cur = cur->right;
-        }
-        else {
-            TreeNode *prev = cur->left;
-            while(prev->right && prev->right != cur) {
-                prev = prev->right;
-            }
-
-            if(prev->right == NULL) {
-                prev->right = cur;
-                preorder.push_back(cur->val);
-                cur = cur->left;
-            }
-            else {
-                prev->right = NULL;
-                cur = cur->right;
-            }
-        }
-    }
-    return preorder;
-}
-
-
 
 
 // ----------- main() ------------

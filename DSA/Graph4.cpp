@@ -36,12 +36,12 @@ public:
 // **** Disjoint set ****
 class DSU {
 public:
-    vector<int> parent, rank;
+    vector<int> parent, rank, size;
     int n;
 
     DSU(int n) {
         this->n = n;
-        parent.resize(n + 1), rank.resize(n + 1, 0);
+        parent.resize(n + 1), rank.resize(n + 1, 0), size.resize(n + 1, 1);
         for (int i = 0; i <= n; i++)
         {
             parent[i] = i;
@@ -61,6 +61,24 @@ public:
             return 0;
         }
 
+        if(size[u] < size[v]) {
+            parent[u] = v;
+            size[v] += size[u];
+        }
+        else {
+            parent[v] = u;
+            size[u] += size[v];
+        }
+        n--;
+        return 1;
+    }
+
+    bool mergeByRank(int u, int v) {
+        u = findParent(u), v = findParent(v);
+        if(u == v) {
+            return 0;
+        }
+
         if(rank[u] < rank[v]) {
             parent[u] = v;
         }
@@ -75,7 +93,7 @@ public:
         return 1;
     }
 
-    int size() {
+    int getSize() {
         return n;
     }
 };

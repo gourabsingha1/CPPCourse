@@ -74,16 +74,16 @@ public:
 class DijkstrasAlgo {
 public:
     vector<int> dijkstra(int src, int n, vector<vector<int>> adj[]) {
-        vector<int> dist(n, 1e9);
-        vector<int> parent(n); // To find a shortest path
-        iota(parent.begin(), parent.end(), 0); // 0-based index
-        priority_queue <pair<int, int>, vector<pair<int, int>>, greater<>> pq;
+        vector<int> dist(n, 1e9), parent(n); // To find a shortest path
         dist[src] = 0;
-        pq.push({0, src}); // dist, node
+        iota(parent.begin(), parent.end(), 0); // 0 - based index
+        priority_queue <pair<int, int>, vector<pair<int, int>>, greater<>> pq;
+        pq.push({0, src}); // {dist, node}
+
         while(pq.size()) {
             auto [prev, u] = pq.top();
             pq.pop();
-            if (prev > dist[u]) continue; // pruning
+            if (prev > dist[u]) continue; // Pruning
             for(auto& it : adj[u]) {
                 int v = it[0], wt = it[1];
                 if(dist[v] > prev + wt) {
@@ -111,7 +111,8 @@ public:
         vector<int> dist(n, 1e9);
         set<pair<int, int>> st;
         dist[src] = 0;
-        st.insert({0, src}); // dist, node
+        st.insert({0, src}); // {dist, node}
+
         while(st.size()) {
             auto stIt = *st.begin();
             auto [prev, u] = stIt;
@@ -119,8 +120,8 @@ public:
             for(auto& it : adj[u]) {
                 int v = it[0], wt = it[1];
                 if(dist[v] > prev + wt) {
-                    if(dist[v] != 1e9){ // edge check
-                        st.erase({dist[v], v}); // longer distance not needed
+                    if(dist[v] != 1e9){ // Edge check
+                        st.erase({dist[v], v}); // Longer distance not needed
                     }
                     dist[v] = prev + wt;
                     st.insert({dist[v], v});

@@ -45,7 +45,7 @@ struct TrieNode {
     int cntPrefix; // Count no. of prefixes equal to word
 
     TrieNode() {
-        memset(links, NULL, sizeof(links));
+        memset(links, 0, sizeof(links));
         isEnd = 0;
         cntEndWith = 0;
         cntPrefix = 0;

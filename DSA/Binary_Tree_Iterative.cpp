@@ -33,21 +33,22 @@ struct TreeNode{
 
 
 // **** Preorder Traversal ****
-vector<int> preorderTraversal(TreeNode *root){
-    vector<int> res;
-    if(!root){
-        return res;
+vector<int> preorderTraversal(TreeNode *root) {
+    if(!root) {
+        return {};
     }
+
+    vector<int> res;
     stack<TreeNode*> st;
     st.push(root);
-    while(st.size()){
+    while(st.size()) {
         root = st.top();
         st.pop();
         res.push_back(root->val);
-        if(root->right){
+        if(root->right) {
             st.push(root->right);
         }
-        if(root->left){
+        if(root->left) {
             st.push(root->left);
         }
     }
@@ -56,18 +57,44 @@ vector<int> preorderTraversal(TreeNode *root){
 
 
 
+// **** Postorder Traversal (Reverse of preorder) ****
+vector<int> postorderTraversal(TreeNode *root) {
+    if(!root) {
+        return {};
+    }
+
+    vector<int> res;
+    stack<TreeNode*> st;
+    st.push(root);
+    while(st.size()) {
+        root = st.top();
+        st.pop();
+        res.push_back(root->val);
+        if(root->right) {
+            st.push(root->right);
+        }
+        if(root->left) {
+            st.push(root->left);
+        }
+    }
+    reverse(res.begin(), res.end());
+    return res;
+}
+
+
+
 // **** Inorder Traversal ****
-vector<int> inorderTraversal(TreeNode *root){
+vector<int> inorderTraversal(TreeNode *root) {
     vector<int> res;
     stack<TreeNode*> st;
     TreeNode *curr = root;
-    while(1){
-        if(curr){
+    while(1) {
+        if(curr) {
             st.push(curr);
             curr = curr->left;
         }
         else{
-            if(st.empty()){
+            if(!st.size()) {
                 break;
             }
             curr = st.top();
@@ -81,57 +108,36 @@ vector<int> inorderTraversal(TreeNode *root){
 
 
 
-// **** Postorder Traversal ****
-vector<int> postorderTraversal(TreeNode *root){
-    vector<int> res; // (Didn't Understand)
+// **** Postorder Traversal (Didn't Understand) ****
+vector<int> postorderTraversalII(TreeNode *root) {
     if(root == NULL){
-        return res;
+        return {};
     }
     
+    vector<int> res;
     stack<TreeNode*> st;
-    while(!st.empty() || root){
-        if(root){
+    while(st.size() || root) {
+        if(root) {
             st.push(root); // st = 1,2,3,4,5,6
             root = root->left; // root = NULL
         }
-        else{
+        else {
             TreeNode *temp = st.top()->right; // NULL
-            if(temp == NULL){
+            if(temp == NULL) {
                 temp = st.top(); // 6
                 st.pop();
                 res.push_back(temp->val); // res = 6
 
-                while(!st.empty() && temp == st.top()->right){ // 6 = 6
+                while(st.size() && temp == st.top()->right) { // 6 = 6
                     temp = st.top(); // 5
                     st.pop();
                     res.push_back(temp->val); // res = 6,5
                 }
             }
-            else{
+            else {
                 root = temp;
             }
         }
-    }
-    return res;
-}
-
-vector<int> postorderTraversalII(TreeNode *root){
-    vector<int> res;
-    if(!root){
-        return res;
-    }
-    stack<TreeNode*> st1, st2;
-    st1.push(root);
-    while(!st1.empty()){
-        root = st1.top();
-        st1.pop();
-        st2.push(root);
-        if(root->left) st1.push(root->left);
-        if(root->right) st1.push(root->right);
-    }
-    while(!st2.empty()){
-        res.push_back(st2.top()->val);
-        st2.pop();
     }
     return res;
 }
@@ -161,11 +167,12 @@ vector<int> postorderTraversalII(TreeNode *root){
     Q is empty here
 
 */
-vector<int> levelorderTraversal(TreeNode *root){
-    vector<int> res;
-    if(!root){
-        return res;
+vector<int> levelorderTraversal(TreeNode *root) {
+    if(!root) {
+        return {};
     }
+
+    vector<int> res;
     queue<TreeNode*> q;
     q.push(root);
     while (q.size()) {
@@ -174,10 +181,10 @@ vector<int> levelorderTraversal(TreeNode *root){
             TreeNode* node = q.front();
             q.pop();
             res.push_back(node->val);
-            if (node->left){
+            if (node->left) {
                 q.push(node->left);
             }
-            if (node->right){
+            if (node->right) {
                 q.push(node->right);
             }
         }
@@ -239,6 +246,69 @@ void treeToGraph(TreeNode* root) {
             q.push(node->right);
         }
     }   
+}
+
+
+// Morris Traversal
+// If no left, print it
+// Else, cur = root, go to extreme right
+// If NULL, then connect that pointer to cur, then cur = cur->left
+// Else cut the thread, print and cur = cur->right
+
+vector<int> morrisInorder(TreeNode* root) {
+    vector<int> inorder;
+    TreeNode *cur = root;
+    while(cur) {
+        if(cur->left == NULL) {
+            inorder.push_back(cur->val);
+            cur = cur->right;
+        }
+        else {
+            TreeNode *prev = cur->left;
+            while(prev->right && prev->right != cur) {
+                prev = prev->right;
+            }
+
+            if(prev->right == NULL) {
+                prev->right = cur;
+                cur = cur->left;
+            }
+            else {
+                prev->right = NULL;
+                inorder.push_back(cur->val);
+                cur = cur->right;
+            }
+        }
+    }
+    return inorder;
+}
+
+vector<int> morrisPreorder(TreeNode* root) {
+    vector<int> preorder;
+    TreeNode *cur = root;
+    while(cur) {
+        if(cur->left == NULL) {
+            preorder.push_back(cur->val);
+            cur = cur->right;
+        }
+        else {
+            TreeNode *prev = cur->left;
+            while(prev->right && prev->right != cur) {
+                prev = prev->right;
+            }
+
+            if(prev->right == NULL) {
+                prev->right = cur;
+                preorder.push_back(cur->val);
+                cur = cur->left;
+            }
+            else {
+                prev->right = NULL;
+                cur = cur->right;
+            }
+        }
+    }
+    return preorder;
 }
 
 

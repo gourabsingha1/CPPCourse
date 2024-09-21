@@ -172,16 +172,15 @@ bool isEqualateralTriangle(int x1, int y1, int x2, int y2, int x3, int y3){
 	return d1 == d2 && d1 == d3;
 }
 
-// check if first point is right angle
-bool isRightAngleTriangleHelper(int x1, int y1, int x2, int y2, int x3, int y3){
-	int d1 = getDisSquare(x1, y1, x2, y2);
-	int d2 = getDisSquare(x2, y2, x3, y3);
-	int d3 = getDisSquare(x3, y3, x1, y1);
-	return d2 == d1 + d3;
+bool isRightHelper(ll a[], ll b[], ll c[]) {
+    return getDisSquare(a[0], a[1], b[0], b[1]) + getDisSquare(b[0], b[1], c[0], c[1]) == getDisSquare(c[0], c[1], a[0], a[1]);
 }
 
-bool isRightAngleTriangle(int x1, int y1, int x2, int y2, int x3, int y3){
-	return isRightAngleTriangleHelper(x1, y1, x2, y2, x3, y3) || isRightAngleTriangleHelper(x2, y2, x3, y3, x1, y1) || isRightAngleTriangleHelper(x3, y3, x1, y1, x2, y2);
+bool isRight(ll a[], ll b[], ll c[]) {
+    if(a[0] == b[0] && a[1] == b[1] || a[0] == c[0] && a[1] == c[1] || b[0] == c[0] && b[1] == c[1]) {
+        return 0;
+    }
+    return isRightHelper(a, b, c) || isRightHelper(b, c, a) || isRightHelper(c, a, b);
 }
 
 // check if slope is same

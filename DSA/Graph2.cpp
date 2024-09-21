@@ -120,8 +120,9 @@ public:
                 q.push(u);
             }
         }
-        while(q.size()){
+        while(q.size()) {
             int size = q.size();
+            cnt += size;
             while(size--) {
                 int u = q.front();
                 q.pop();
@@ -130,7 +131,6 @@ public:
                         q.push(v);
                     }
                 }
-                cnt++;
             }
         }
         return cnt != n;
