@@ -17,9 +17,9 @@ int sumVector(vector<int> &nums){
 
 
 // **** Binary to Decimal ****
-int binToDec(string& s){
+int binToDec(string& s) {
     int n = s.size(), cnt = 0, res = 0;
-    while(n--){
+    while(n--) {
         res += (s[n] == '1') * (1 << cnt);
         cnt++;
     }
@@ -28,9 +28,9 @@ int binToDec(string& s){
 
 
 // **** Decimal to Binary ****
-string decToBin(int n){
+string decToBin(int n) {
     string res;
-    while(n){
+    while(n) {
         if(n & 1) res = '1' + res;
         else res = '0' + res;
         n /= 2;
@@ -40,12 +40,11 @@ string decToBin(int n){
 
 
 // **** Prime or not - O(sqrt(N)) ****
-bool isPrime(int n){
+bool isPrime(int n) {
     if(n <= 1) return 0;
     int sq = sqrt(n);
-    for (int i = 2; i <= sq; i++)
-    {
-        if(n % i == 0){
+    for (int i = 2; i <= sq; i++) {
+        if(n % i == 0) {
             return 0;
         }
     }
@@ -54,13 +53,12 @@ bool isPrime(int n){
 
 
 // **** No. of Divisors - O(sqrt(N)) ****
-ll divCount(ll n){
+ll divCount(ll n) {
     ll res = 0, sq = sqrt(n);
-    for (int i = 1; i <= sq; i++)
-    {
-        if(n % i == 0){
+    for (int i = 1; i <= sq; i++) {
+        if(n % i == 0) {
             res += 2;
-            if(n / i == i){
+            if(n / i == i) {
                 res--;
             }
         }
@@ -70,14 +68,13 @@ ll divCount(ll n){
 
 
 // **** All Divisors - O(sqrt(N)) ****
-vector<ll> divisors(ll n){
+vector<ll> divisors(ll n) {
     vector<ll> res;
     int sq = sqrt(n);
-    for (int i = 1; i <= sq; i++)
-    {
+    for (int i = 1; i <= sq; i++) {
         if(n % i == 0){
             res.push_back(i);
-            if(n / i != i){
+            if(n / i != i) {
                 res.push_back(n / i);
             }
         }
@@ -87,9 +84,9 @@ vector<ll> divisors(ll n){
 
 
 // **** pow(x, n) - O(log(N)) ****
-ll exp(ll x, int n, ll m = M){
+ll exp(ll x, int n, ll m = M) {
     ll res = 1;
-    while(n){
+    while(n) {
         if(n & 1) {
             if(n > 0) {
                 res = (res * x) % m;
@@ -128,8 +125,8 @@ int mod_inv(int a, int m = M) { return exp(a, m - 2, m);}
 
 
 // **** Palindrome or not ****
-bool isPal(string s, ll start, ll end){
-    while(start <= end){
+bool isPal(string s, ll start, ll end) {
+    while(start <= end) {
         if(s[start++] != s[end--]){
             return 0;
         }
@@ -139,9 +136,9 @@ bool isPal(string s, ll start, ll end){
 
 
 // **** Find factorial ****
-ll fac(ll n, int m = M){
+ll fac(ll n, int m = M) {
     ll res = 1;
-    while(n){
+    while(n) {
         res = (res * n) % m;
         n--;
     }
@@ -151,15 +148,14 @@ ll fac(ll n, int m = M){
 
 // **** nCr - O(r) ****
 // nCr = n! / (r! * (n - r)!) = (n * (n - 1) * (n - 2) ... r times) / r!
-long nCr(int n, int r){
+long nCr(int n, int r) {
     if(r > n) {
         return nCr(r, n);
     }
 
     long res = 1;
     r = min(r, n - r);
-    for (int i = 1; i <= r; i++)
-    {
+    for (int i = 1; i <= r; i++) {
         res = res * (n - i + 1) / i;
     }
     return res;
@@ -167,12 +163,12 @@ long nCr(int n, int r){
 
 
 // **** Fibonacchi - O(N) ****
-int fib(int n){
+int fib(int n) {
     if(n < 2) {
         return n;
     }
     int one = 0, two = 1;
-    for(int i = 2; i <= n; i++){
+    for(int i = 2; i <= n; i++) {
         int temp = two;
         two += one;
         one = temp;
@@ -182,10 +178,9 @@ int fib(int n){
 
 
 // **** Hash value ****
-int hash(string s, int p = M){
+int hash(string s, int p = M) {
     int res = 0, n = s.size();
-    for (int i = 0; i < n; i++)
-    {
+    for (int i = 0; i < n; i++) {
         res = mod_add(res, mod_mul(s[n - 1 - i] - 'a' + 1, exp(26, i, p), p), p);
     }
     return res;
@@ -196,12 +191,12 @@ int hash(string s, int p = M){
 vector<int> lps(string& s) {
     int n = s.size(), i = 1, prevLPS = 0;
     vector<int> LPS(n, 0);
-    while(i < n){
-        if(s[i] == s[prevLPS]){
+    while(i < n) {
+        if(s[i] == s[prevLPS]) {
             LPS[i] = prevLPS + 1;
             prevLPS++, i++;
         }
-        else if(prevLPS == 0){
+        else if(prevLPS == 0) {
             LPS[i] = 0, i++;
         }
         else{

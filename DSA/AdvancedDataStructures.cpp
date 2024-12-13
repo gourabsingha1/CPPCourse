@@ -151,13 +151,28 @@ public:
 // **** Flexible Trie - O(N * S), O(N * S) ****
 class TrieNode2 {
 public:
-    unordered_map<int, TrieNode2*> children;
+    unordered_map<int, TrieNode2*> links;
     int cntEndWith; // Count no. of words equal to word
     int cntPrefix; // Count no. of prefixes equal to word
 
     TrieNode2() {
         cntEndWith = 0;
         cntPrefix = 0;
+    }
+
+    // Checks if a node contains a character
+    bool containsKey(char ch) {
+        return links[ch - 'a'];
+    }
+
+    // Puts a node
+    void putKey(TrieNode2* newNode, char ch) {
+        links[ch - 'a'] = newNode;
+    }
+
+    // Next node
+    TrieNode2* next(char ch) {
+        return links[ch - 'a'];
     }
 };
 
@@ -172,10 +187,10 @@ public:
     void insert(string& word) {
         TrieNode2* node = root;
         for(auto& ch : word) {
-            if(node->children.find(ch) == node->children.end()) {
-                node->children[ch] = new TrieNode2();
+            if(!node->containsKey(ch)) {
+                node->putKey(new TrieNode2(), ch);
             }
-            node = node->children[ch];
+            node = node->next(ch);
             node->cntPrefix++;
         }
         node->cntEndWith++;
@@ -184,10 +199,10 @@ public:
     bool search(string& word) {
         TrieNode2* node = root;
         for(auto& ch : word) {
-            if(node->children.find(ch) == node->children.end()) {
+            if(!node->containsKey(ch)) {
                 return 0;
             }
-            node = node->children[ch];
+            node = node->next(ch);
         }
         return node->cntEndWith;
     }
@@ -195,10 +210,10 @@ public:
     void erase(string& word) { // Assuming word exists
         TrieNode2* node = root;
         for(auto& ch : word) {
-            if(node->children.find(ch) == node->children.end()) {
+            if(!node->containsKey(ch)) {
                 return;
             }
-            node = node->children[ch];
+            node = node->next(ch);
             node->cntPrefix--;
         }
         node->cntEndWith--;
